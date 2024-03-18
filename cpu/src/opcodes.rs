@@ -56,4 +56,13 @@ pub const AND_ABY: u8 = 0x39;
 pub const AND_INX: u8 = 0x21;
 pub const AND_INY: u8 = 0x31;
 
+pub const EOR_IM: u8 = 0x49;
+pub const EOR_ZP: u8 = 0x45;
+pub const EOR_ZPX: u8 = 0x55;
+pub const EOR_ABS: u8 = 0x4D;
+pub const EOR_ABX: u8 = 0x5D;
+pub const EOR_ABY: u8 = 0x59;
+pub const EOR_INX: u8 = 0x41;
+pub const EOR_INY: u8 = 0x51;
+
 pub const JMP_ABS: u8 = 0x4C;

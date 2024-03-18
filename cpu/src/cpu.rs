@@ -2,6 +2,7 @@ use crate::{addressing, opcode, Clock, Counter, Memory};
 use bitflags::bitflags;
 
 mod and;
+mod eor;
 mod lda;
 mod ldx;
 mod ldy;
@@ -229,6 +230,15 @@ impl CPU {
             opcode::AND_ABY => self.AND(AddressingMode::AbsoluteY, data),
             opcode::AND_INX => self.AND(AddressingMode::IndexedIndirect, data),
             opcode::AND_INY => self.AND(AddressingMode::IndirectIndexed, data),
+
+            opcode::EOR_IM => self.EOR(AddressingMode::Immediate, data),
+            opcode::EOR_ZP => self.EOR(AddressingMode::ZeroPage, data),
+            opcode::EOR_ZPX => self.EOR(AddressingMode::ZeroPageX, data),
+            opcode::EOR_ABS => self.EOR(AddressingMode::Absolute, data),
+            opcode::EOR_ABX => self.EOR(AddressingMode::AbsoluteX, data),
+            opcode::EOR_ABY => self.EOR(AddressingMode::AbsoluteY, data),
+            opcode::EOR_INX => self.EOR(AddressingMode::IndexedIndirect, data),
+            opcode::EOR_INY => self.EOR(AddressingMode::IndirectIndexed, data),
 
             opcode::JMP_ABS => match self.counter.value {
                 0 => {
