@@ -2,6 +2,7 @@ use crate::{addressing, opcode, Clock, Counter, Memory};
 use bitflags::bitflags;
 
 mod and;
+mod bit;
 mod eor;
 mod lda;
 mod ldx;
