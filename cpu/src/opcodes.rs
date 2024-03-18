@@ -47,4 +47,13 @@ pub const PHP: u8 = 0x08;
 pub const PLA: u8 = 0x68;
 pub const PLP: u8 = 0x28;
 
+pub const AND_IM: u8 = 0x29;
+pub const AND_ZP: u8 = 0x25;
+pub const AND_ZPX: u8 = 0x35;
+pub const AND_ABS: u8 = 0x2D;
+pub const AND_ABX: u8 = 0x3D;
+pub const AND_ABY: u8 = 0x39;
+pub const AND_INX: u8 = 0x21;
+pub const AND_INY: u8 = 0x31;
+
 pub const JMP_ABS: u8 = 0x4C;
