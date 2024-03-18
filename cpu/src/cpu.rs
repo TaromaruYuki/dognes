@@ -6,6 +6,7 @@ mod eor;
 mod lda;
 mod ldx;
 mod ldy;
+mod ora;
 mod pha;
 mod php;
 mod pla;
@@ -239,6 +240,15 @@ impl CPU {
             opcode::EOR_ABY => self.EOR(AddressingMode::AbsoluteY, data),
             opcode::EOR_INX => self.EOR(AddressingMode::IndexedIndirect, data),
             opcode::EOR_INY => self.EOR(AddressingMode::IndirectIndexed, data),
+
+            opcode::ORA_IM => self.ORA(AddressingMode::Immediate, data),
+            opcode::ORA_ZP => self.ORA(AddressingMode::ZeroPage, data),
+            opcode::ORA_ZPX => self.ORA(AddressingMode::ZeroPageX, data),
+            opcode::ORA_ABS => self.ORA(AddressingMode::Absolute, data),
+            opcode::ORA_ABX => self.ORA(AddressingMode::AbsoluteX, data),
+            opcode::ORA_ABY => self.ORA(AddressingMode::AbsoluteY, data),
+            opcode::ORA_INX => self.ORA(AddressingMode::IndexedIndirect, data),
+            opcode::ORA_INY => self.ORA(AddressingMode::IndirectIndexed, data),
 
             opcode::JMP_ABS => match self.counter.value {
                 0 => {

@@ -65,4 +65,13 @@ pub const EOR_ABY: u8 = 0x59;
 pub const EOR_INX: u8 = 0x41;
 pub const EOR_INY: u8 = 0x51;
 
+pub const ORA_IM: u8 = 0x09;
+pub const ORA_ZP: u8 = 0x05;
+pub const ORA_ZPX: u8 = 0x15;
+pub const ORA_ABS: u8 = 0x0D;
+pub const ORA_ABX: u8 = 0x1D;
+pub const ORA_ABY: u8 = 0x19;
+pub const ORA_INX: u8 = 0x01;
+pub const ORA_INY: u8 = 0x11;
+
 pub const JMP_ABS: u8 = 0x4C;
