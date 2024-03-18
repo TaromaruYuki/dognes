@@ -17,7 +17,7 @@ impl CPU {
         });
         map.insert(3, |cpu, _| {
             cpu.ps.set(StatusFlag::Z, cpu.a == 0);
-            cpu.ps.set(StatusFlag::N, (cpu.a & 0b01000000) > 0);
+            cpu.ps.set(StatusFlag::N, (cpu.a & 0x80) > 0);
             cpu.instruction_finish();
         });
 
