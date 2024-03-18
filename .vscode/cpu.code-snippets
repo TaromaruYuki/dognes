@@ -1,0 +1,63 @@
+{
+	// Place your n workspace snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and 
+	// description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope 
+	// is left empty or omitted, the snippet gets applied to all languages. The prefix is what is 
+	// used to trigger the snippet and the body will be expanded and inserted. Possible variables are: 
+	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. 
+	// Placeholders with the same ids are connected.
+	// Example:
+	// "Print to console": {
+	// 	"scope": "javascript,typescript",
+	// 	"prefix": "log",
+	// 	"body": [
+	// 		"console.log('$1');",
+	// 		"$2"
+	// 	],
+	// 	"description": "Log output to console"
+	// }
+	"CPU Instruction": {
+		"scope": "rust",
+		"prefix": "cpuinst",
+		"body": [
+			"use super::{AddressingMode, CPUData, ReadWrite, StatusFlag, CPU};",
+			"use crate::addressing;",
+			"",
+			"#[allow(non_snake_case)]",
+			"impl CPU {",
+			"\tpub(super) fn $1(&mut self, mode: AddressingMode, data: &mut CPUData) {",
+			"\t\tmatch mode {",
+			"\t\t\t$0",
+			"\t\t\t_ => panic!(\"Should never reach.\"),",
+			"\t\t}",
+			"\t}",
+			"}",
+			"",
+			"#[cfg(test)]",
+			"mod tests {",
+			"\t#![allow(non_snake_case)]",
+			"\tuse crate::{opcode, CPUData, ReadWrite, CPU};",
+			"",
+			"#[test]",
+			"\tfn $1_ADDR() {",
+			"\t\tlet mut data = CPUData::default();",
+			"\t\tlet mut cpu = CPU::default();",
+			"\t\tcpu.reset(&mut data);",
+			"\t\tcpu.pc = 0x0000;",
+			"",
+			"\t\tfor _ in 0..=2 {",
+			"\t\t\tcpu.tick(&mut data);",
+			"",
+			"\t\t\tdata.clock.tick();",
+			"",
+			"\t\t\tmatch data.pins.rw {",
+			"\t\t\t\tReadWrite::R => data.pins.data = data.mem.data[data.pins.address as usize],",
+			"\t\t\t\tReadWrite::W => data.mem.data[data.pins.address as usize] = data.pins.data,",
+			"\t\t\t}",
+			"\t\t}",
+			"",
+			"\t\tassert_eq!(cpu.pc, 0x0002);",
+			"\t}",
+			"}"
+		]
+	}
+}
