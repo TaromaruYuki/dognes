@@ -4,6 +4,7 @@ use bitflags::bitflags;
 mod adc;
 mod and;
 mod bit;
+mod cmp;
 mod eor;
 mod lda;
 mod ldx;
@@ -273,6 +274,15 @@ impl CPU {
             opcode::SBC_ABY => self.SBC(AddressingMode::AbsoluteY, data),
             opcode::SBC_INX => self.SBC(AddressingMode::IndexedIndirect, data),
             opcode::SBC_INY => self.SBC(AddressingMode::IndirectIndexed, data),
+
+            opcode::CMP_IM => self.CMP(AddressingMode::Immediate, data),
+            opcode::CMP_ZP => self.CMP(AddressingMode::ZeroPage, data),
+            opcode::CMP_ZPX => self.CMP(AddressingMode::ZeroPageX, data),
+            opcode::CMP_ABS => self.CMP(AddressingMode::Absolute, data),
+            opcode::CMP_ABX => self.CMP(AddressingMode::AbsoluteX, data),
+            opcode::CMP_ABY => self.CMP(AddressingMode::AbsoluteY, data),
+            opcode::CMP_INX => self.CMP(AddressingMode::IndexedIndirect, data),
+            opcode::CMP_INY => self.CMP(AddressingMode::IndirectIndexed, data),
 
             opcode::JMP_ABS => match self.counter.value {
                 0 => {

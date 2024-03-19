@@ -95,4 +95,13 @@ pub const SBC_ABY: u8 = 0xF9;
 pub const SBC_INX: u8 = 0xE1;
 pub const SBC_INY: u8 = 0xF1;
 
+pub const CMP_IM: u8 = 0xC9;
+pub const CMP_ZP: u8 = 0xC5;
+pub const CMP_ZPX: u8 = 0xD5;
+pub const CMP_ABS: u8 = 0xCD;
+pub const CMP_ABX: u8 = 0xDD;
+pub const CMP_ABY: u8 = 0xD9;
+pub const CMP_INX: u8 = 0xC1;
+pub const CMP_INY: u8 = 0xD1;
+
 pub const JMP_ABS: u8 = 0x4C;
