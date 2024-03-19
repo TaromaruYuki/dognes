@@ -5,6 +5,7 @@ mod adc;
 mod and;
 mod bit;
 mod cmp;
+mod cpx;
 mod eor;
 mod lda;
 mod ldx;
@@ -283,6 +284,10 @@ impl CPU {
             opcode::CMP_ABY => self.CMP(AddressingMode::AbsoluteY, data),
             opcode::CMP_INX => self.CMP(AddressingMode::IndexedIndirect, data),
             opcode::CMP_INY => self.CMP(AddressingMode::IndirectIndexed, data),
+
+            opcode::CPX_IM => self.CPX(AddressingMode::Immediate, data),
+            opcode::CPX_ZP => self.CPX(AddressingMode::ZeroPage, data),
+            opcode::CPX_ABS => self.CPX(AddressingMode::Absolute, data),
 
             opcode::JMP_ABS => match self.counter.value {
                 0 => {

@@ -104,4 +104,8 @@ pub const CMP_ABY: u8 = 0xD9;
 pub const CMP_INX: u8 = 0xC1;
 pub const CMP_INY: u8 = 0xD1;
 
+pub const CPX_IM: u8 = 0xE0;
+pub const CPX_ZP: u8 = 0xE4;
+pub const CPX_ABS: u8 = 0xEC;
+
 pub const JMP_ABS: u8 = 0x4C;
