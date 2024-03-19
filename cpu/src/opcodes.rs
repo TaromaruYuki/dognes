@@ -77,4 +77,13 @@ pub const ORA_INY: u8 = 0x11;
 pub const BIT_ZP: u8 = 0x24;
 pub const BIT_ABS: u8 = 0x2C;
 
+pub const ADC_IM: u8 = 0x69;
+pub const ADC_ZP: u8 = 0x65;
+pub const ADC_ZPX: u8 = 0x75;
+pub const ADC_ABS: u8 = 0x6D;
+pub const ADC_ABX: u8 = 0x7D;
+pub const ADC_ABY: u8 = 0x79;
+pub const ADC_INX: u8 = 0x61;
+pub const ADC_INY: u8 = 0x71;
+
 pub const JMP_ABS: u8 = 0x4C;
