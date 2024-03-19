@@ -74,4 +74,7 @@ pub const ORA_ABY: u8 = 0x19;
 pub const ORA_INX: u8 = 0x01;
 pub const ORA_INY: u8 = 0x11;
 
+pub const BIT_ZP: u8 = 0x24;
+pub const BIT_ABS: u8 = 0x2C;
+
 pub const JMP_ABS: u8 = 0x4C;

@@ -46,8 +46,12 @@ mod tests {
         let mut data = CPUData::default();
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
-        cpu.a = 0xC0;
+        cpu.a = 0xFF;
         cpu.pc = 0x0000;
+
+        data.mem.data[0x0000] = opcode::BIT_ZP;
+        data.mem.data[0x0001] = 0xAB;
+        data.mem.data[0x00AB] = 0xC0;
 
         for _ in 0..=9 {
             cpu.tick(&mut data);
@@ -63,6 +67,7 @@ mod tests {
         assert!(cpu.ps.contains(StatusFlag::V));
         assert!(cpu.ps.contains(StatusFlag::N));
         assert!(!cpu.ps.contains(StatusFlag::Z));
+        assert_eq!(cpu.a, 0xFF);
         assert_eq!(cpu.pc, 0x0002);
     }
 
@@ -71,8 +76,12 @@ mod tests {
         let mut data = CPUData::default();
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
-        cpu.a = 0x00;
+        cpu.a = 0xFF;
         cpu.pc = 0x0000;
+
+        data.mem.data[0x0000] = opcode::BIT_ZP;
+        data.mem.data[0x0001] = 0xAB;
+        data.mem.data[0x00AB] = 0x00;
 
         for _ in 0..=9 {
             cpu.tick(&mut data);
@@ -89,5 +98,67 @@ mod tests {
         assert!(!cpu.ps.contains(StatusFlag::N));
         assert!(cpu.ps.contains(StatusFlag::Z));
         assert_eq!(cpu.pc, 0x0002);
+    }
+
+    #[test]
+    fn BIT_ABS() {
+        let mut data = CPUData::default();
+        let mut cpu = CPU::default();
+        cpu.reset(&mut data);
+        cpu.a = 0xFF;
+        cpu.pc = 0x0000;
+
+        data.mem.data[0x0000] = opcode::BIT_ABS;
+        data.mem.data[0x0001] = 0x07;
+        data.mem.data[0x0002] = 0xD0;
+        data.mem.data[0xD007] = 0xC0;
+
+        for _ in 0..=11 {
+            cpu.tick(&mut data);
+
+            data.clock.tick();
+
+            match data.pins.rw {
+                ReadWrite::R => data.pins.data = data.mem.data[data.pins.address as usize],
+                ReadWrite::W => data.mem.data[data.pins.address as usize] = data.pins.data,
+            }
+        }
+
+        assert!(cpu.ps.contains(StatusFlag::V));
+        assert!(cpu.ps.contains(StatusFlag::N));
+        assert!(!cpu.ps.contains(StatusFlag::Z));
+        assert_eq!(cpu.a, 0xFF);
+        assert_eq!(cpu.pc, 0x0003);
+    }
+
+    #[test]
+    fn BIT_ABS_zero() {
+        let mut data = CPUData::default();
+        let mut cpu = CPU::default();
+        cpu.reset(&mut data);
+        cpu.a = 0xFF;
+        cpu.pc = 0x0000;
+
+        data.mem.data[0x0000] = opcode::BIT_ABS;
+        data.mem.data[0x0001] = 0x07;
+        data.mem.data[0x0002] = 0xD0;
+        data.mem.data[0xD007] = 0x00;
+
+        for _ in 0..=11 {
+            cpu.tick(&mut data);
+
+            data.clock.tick();
+
+            match data.pins.rw {
+                ReadWrite::R => data.pins.data = data.mem.data[data.pins.address as usize],
+                ReadWrite::W => data.mem.data[data.pins.address as usize] = data.pins.data,
+            }
+        }
+
+        assert!(!cpu.ps.contains(StatusFlag::V));
+        assert!(!cpu.ps.contains(StatusFlag::N));
+        assert!(cpu.ps.contains(StatusFlag::Z));
+        assert_eq!(cpu.a, 0xFF);
+        assert_eq!(cpu.pc, 0x0003);
     }
 }

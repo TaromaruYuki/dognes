@@ -251,6 +251,9 @@ impl CPU {
             opcode::ORA_INX => self.ORA(AddressingMode::IndexedIndirect, data),
             opcode::ORA_INY => self.ORA(AddressingMode::IndirectIndexed, data),
 
+            opcode::BIT_ZP => self.BIT(AddressingMode::ZeroPage, data),
+            opcode::BIT_ABS => self.BIT(AddressingMode::Absolute, data),
+
             opcode::JMP_ABS => match self.counter.value {
                 0 => {
                     data.pins.address = self.pc;
