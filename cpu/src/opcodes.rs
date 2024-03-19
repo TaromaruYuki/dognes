@@ -86,4 +86,13 @@ pub const ADC_ABY: u8 = 0x79;
 pub const ADC_INX: u8 = 0x61;
 pub const ADC_INY: u8 = 0x71;
 
+pub const SBC_IM: u8 = 0xE9;
+pub const SBC_ZP: u8 = 0xE5;
+pub const SBC_ZPX: u8 = 0xF5;
+pub const SBC_ABS: u8 = 0xED;
+pub const SBC_ABX: u8 = 0xFD;
+pub const SBC_ABY: u8 = 0xF9;
+pub const SBC_INX: u8 = 0xE1;
+pub const SBC_INY: u8 = 0xF1;
+
 pub const JMP_ABS: u8 = 0x4C;

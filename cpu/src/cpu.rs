@@ -13,6 +13,7 @@ mod pha;
 mod php;
 mod pla;
 mod plp;
+mod sbc;
 mod sta;
 mod stx;
 mod sty;
@@ -263,6 +264,15 @@ impl CPU {
             opcode::ADC_ABY => self.ADC(AddressingMode::AbsoluteY, data),
             opcode::ADC_INX => self.ADC(AddressingMode::IndexedIndirect, data),
             opcode::ADC_INY => self.ADC(AddressingMode::IndirectIndexed, data),
+
+            opcode::SBC_IM => self.SBC(AddressingMode::Immediate, data),
+            opcode::SBC_ZP => self.SBC(AddressingMode::ZeroPage, data),
+            opcode::SBC_ZPX => self.SBC(AddressingMode::ZeroPageX, data),
+            opcode::SBC_ABS => self.SBC(AddressingMode::Absolute, data),
+            opcode::SBC_ABX => self.SBC(AddressingMode::AbsoluteX, data),
+            opcode::SBC_ABY => self.SBC(AddressingMode::AbsoluteY, data),
+            opcode::SBC_INX => self.SBC(AddressingMode::IndexedIndirect, data),
+            opcode::SBC_INY => self.SBC(AddressingMode::IndirectIndexed, data),
 
             opcode::JMP_ABS => match self.counter.value {
                 0 => {
