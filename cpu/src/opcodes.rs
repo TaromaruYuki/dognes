@@ -112,4 +112,9 @@ pub const CPY_IM: u8 = 0xC0;
 pub const CPY_ZP: u8 = 0xC4;
 pub const CPY_ABS: u8 = 0xCC;
 
+pub const INC_ZP: u8 = 0xE6;
+pub const INC_ZPX: u8 = 0xF6;
+pub const INC_ABS: u8 = 0xEE;
+pub const INC_ABX: u8 = 0xFE;
+
 pub const JMP_ABS: u8 = 0x4C;

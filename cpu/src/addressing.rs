@@ -19,8 +19,8 @@ pub(crate) fn immediate() -> CaseHashMap {
 pub(crate) fn zero_page() -> CaseHashMap {
     let mut map: CaseHashMap = HashMap::new();
 
-    map.insert(0, methods::get_current_byte);
-    map.insert(1, methods::get_byte_from_data);
+    map.insert(0, methods::get_current_byte); // Byte after opcode
+    map.insert(1, methods::get_byte_from_data); // Content at opcode
 
     map
 }
@@ -284,6 +284,12 @@ pub mod methods {
 
     pub fn store_zero_page_y(cpu: &mut CPU, data: &mut CPUData) {
         store_zero_page_register(cpu, data, cpu.y);
+    }
+
+    pub fn store_temp_8_in_temp16(cpu: &mut CPU, data: &mut CPUData) {
+        data.pins.address = cpu.temp16;
+        data.pins.data = cpu.temp8;
+        data.pins.rw = ReadWrite::W;
     }
 
     fn store_register(cpu: &mut CPU, data: &mut CPUData, reg: u8) {

@@ -8,6 +8,7 @@ mod cmp;
 mod cpx;
 mod cpy;
 mod eor;
+mod inc;
 mod lda;
 mod ldx;
 mod ldy;
@@ -293,6 +294,11 @@ impl CPU {
             opcode::CPY_IM => self.CPY(AddressingMode::Immediate, data),
             opcode::CPY_ZP => self.CPY(AddressingMode::ZeroPage, data),
             opcode::CPY_ABS => self.CPY(AddressingMode::Absolute, data),
+
+            opcode::INC_ZP => self.INC(AddressingMode::ZeroPage, data),
+            opcode::INC_ZPX => self.INC(AddressingMode::ZeroPageX, data),
+            opcode::INC_ABS => self.INC(AddressingMode::Absolute, data),
+            opcode::INC_ABX => self.INC(AddressingMode::AbsoluteX, data),
 
             opcode::JMP_ABS => match self.counter.value {
                 0 => {
