@@ -7,6 +7,9 @@ mod bit;
 mod cmp;
 mod cpx;
 mod cpy;
+mod dec;
+mod dex;
+mod dey;
 mod eor;
 mod inc;
 mod inx;
@@ -304,6 +307,14 @@ impl CPU {
 
             opcode::INX => self.INX(data),
             opcode::INY => self.INY(data),
+
+            opcode::DEC_ZP => self.DEC(AddressingMode::ZeroPage, data),
+            opcode::DEC_ZPX => self.DEC(AddressingMode::ZeroPageX, data),
+            opcode::DEC_ABS => self.DEC(AddressingMode::Absolute, data),
+            opcode::DEC_ABX => self.DEC(AddressingMode::AbsoluteX, data),
+
+            opcode::DEX => self.DEX(data),
+            opcode::DEY => self.DEY(data),
 
             opcode::JMP_ABS => match self.counter.value {
                 0 => {

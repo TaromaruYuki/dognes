@@ -120,4 +120,12 @@ pub const INC_ABX: u8 = 0xFE;
 pub const INX: u8 = 0xE8;
 pub const INY: u8 = 0xC8;
 
+pub const DEC_ZP: u8 = 0xC6;
+pub const DEC_ZPX: u8 = 0xD6;
+pub const DEC_ABS: u8 = 0xCE;
+pub const DEC_ABX: u8 = 0xDE;
+
+pub const DEX: u8 = 0xCA;
+pub const DEY: u8 = 0x88;
+
 pub const JMP_ABS: u8 = 0x4C;
