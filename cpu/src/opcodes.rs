@@ -140,4 +140,10 @@ pub const LSR_ZPX: u8 = 0x56;
 pub const LSR_ABS: u8 = 0x4E;
 pub const LSR_ABX: u8 = 0x5E;
 
+pub const ROL_AC: u8 = 0x2A;
+pub const ROL_ZP: u8 = 0x26;
+pub const ROL_ZPX: u8 = 0x36;
+pub const ROL_ABS: u8 = 0x2E;
+pub const ROL_ABX: u8 = 0x3E;
+
 pub const JMP_ABS: u8 = 0x4C;

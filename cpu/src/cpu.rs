@@ -24,6 +24,7 @@ mod pha;
 mod php;
 mod pla;
 mod plp;
+mod rol;
 mod sbc;
 mod sta;
 mod stx;
@@ -329,6 +330,12 @@ impl CPU {
             opcode::LSR_ZPX => self.LSR(AddressingMode::ZeroPageX, data),
             opcode::LSR_ABS => self.LSR(AddressingMode::Absolute, data),
             opcode::LSR_ABX => self.LSR(AddressingMode::AbsoluteX, data),
+
+            opcode::ROL_AC => self.ROL(AddressingMode::Accumulator, data),
+            opcode::ROL_ZP => self.ROL(AddressingMode::ZeroPage, data),
+            opcode::ROL_ZPX => self.ROL(AddressingMode::ZeroPageX, data),
+            opcode::ROL_ABS => self.ROL(AddressingMode::Absolute, data),
+            opcode::ROL_ABX => self.ROL(AddressingMode::AbsoluteX, data),
 
             opcode::JMP_ABS => match self.counter.value {
                 0 => {
