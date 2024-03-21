@@ -146,4 +146,10 @@ pub const ROL_ZPX: u8 = 0x36;
 pub const ROL_ABS: u8 = 0x2E;
 pub const ROL_ABX: u8 = 0x3E;
 
+pub const ROR_AC: u8 = 0x6A;
+pub const ROR_ZP: u8 = 0x66;
+pub const ROR_ZPX: u8 = 0x76;
+pub const ROR_ABS: u8 = 0x6E;
+pub const ROR_ABX: u8 = 0x7E;
+
 pub const JMP_ABS: u8 = 0x4C;
