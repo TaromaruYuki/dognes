@@ -3,6 +3,7 @@ use bitflags::bitflags;
 
 mod adc;
 mod and;
+mod asl;
 mod bit;
 mod cmp;
 mod cpx;
@@ -315,6 +316,12 @@ impl CPU {
 
             opcode::DEX => self.DEX(data),
             opcode::DEY => self.DEY(data),
+
+            opcode::ASL_AC => self.ASL(AddressingMode::Accumulator, data),
+            opcode::ASL_ZP => self.ASL(AddressingMode::ZeroPage, data),
+            opcode::ASL_ZPX => self.ASL(AddressingMode::ZeroPageX, data),
+            opcode::ASL_ABS => self.ASL(AddressingMode::Absolute, data),
+            opcode::ASL_ABX => self.ASL(AddressingMode::AbsoluteX, data),
 
             opcode::JMP_ABS => match self.counter.value {
                 0 => {

@@ -128,4 +128,10 @@ pub const DEC_ABX: u8 = 0xDE;
 pub const DEX: u8 = 0xCA;
 pub const DEY: u8 = 0x88;
 
+pub const ASL_AC: u8 = 0x0A;
+pub const ASL_ZP: u8 = 0x06;
+pub const ASL_ZPX: u8 = 0x16;
+pub const ASL_ABS: u8 = 0x0E;
+pub const ASL_ABX: u8 = 0x1E;
+
 pub const JMP_ABS: u8 = 0x4C;

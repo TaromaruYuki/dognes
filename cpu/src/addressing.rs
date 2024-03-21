@@ -183,6 +183,11 @@ pub mod methods {
         data.pins.rw = ReadWrite::R;
     }
 
+    pub fn get_byte_from_data_save_addr(cpu: &mut CPU, data: &mut CPUData) {
+        cpu.temp16 = data.pins.data as u16;
+        get_byte_from_data(cpu, data);
+    }
+
     pub fn get_byte_from_data(_cpu: &mut CPU, data: &mut CPUData) {
         data.pins.address = data.pins.data as u16;
         data.pins.rw = ReadWrite::R;
@@ -194,6 +199,11 @@ pub mod methods {
 
     pub fn add_y_to_data(cpu: &mut CPU, data: &mut CPUData) {
         (cpu.temp8, _) = data.pins.data.overflowing_add(cpu.y);
+    }
+
+    pub fn get_byte_from_temp8_save_addr(cpu: &mut CPU, data: &mut CPUData) {
+        cpu.temp16 = cpu.temp8 as u16;
+        get_byte_from_temp8(cpu, data);
     }
 
     pub fn get_byte_from_temp8(cpu: &mut CPU, data: &mut CPUData) {
@@ -214,6 +224,11 @@ pub mod methods {
     pub fn create_address_from_data(cpu: &mut CPU, data: &mut CPUData) {
         let addr: u16 = cpu.temp16 | ((data.pins.data as u16) << 8);
         data.pins.address = addr;
+    }
+
+    pub fn create_address_from_data_save_addr(cpu: &mut CPU, data: &mut CPUData) {
+        create_address_from_data(cpu, data);
+        cpu.temp16 = data.pins.address;
     }
 
     pub fn get_next_byte_add_1_temp8(cpu: &mut CPU, data: &mut CPUData) {
