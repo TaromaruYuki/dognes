@@ -134,4 +134,10 @@ pub const ASL_ZPX: u8 = 0x16;
 pub const ASL_ABS: u8 = 0x0E;
 pub const ASL_ABX: u8 = 0x1E;
 
+pub const LSR_AC: u8 = 0x4A;
+pub const LSR_ZP: u8 = 0x46;
+pub const LSR_ZPX: u8 = 0x56;
+pub const LSR_ABS: u8 = 0x4E;
+pub const LSR_ABX: u8 = 0x5E;
+
 pub const JMP_ABS: u8 = 0x4C;

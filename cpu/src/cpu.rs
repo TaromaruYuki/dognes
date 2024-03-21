@@ -18,6 +18,7 @@ mod iny;
 mod lda;
 mod ldx;
 mod ldy;
+mod lsr;
 mod ora;
 mod pha;
 mod php;
@@ -322,6 +323,12 @@ impl CPU {
             opcode::ASL_ZPX => self.ASL(AddressingMode::ZeroPageX, data),
             opcode::ASL_ABS => self.ASL(AddressingMode::Absolute, data),
             opcode::ASL_ABX => self.ASL(AddressingMode::AbsoluteX, data),
+
+            opcode::LSR_AC => self.LSR(AddressingMode::Accumulator, data),
+            opcode::LSR_ZP => self.LSR(AddressingMode::ZeroPage, data),
+            opcode::LSR_ZPX => self.LSR(AddressingMode::ZeroPageX, data),
+            opcode::LSR_ABS => self.LSR(AddressingMode::Absolute, data),
+            opcode::LSR_ABX => self.LSR(AddressingMode::AbsoluteX, data),
 
             opcode::JMP_ABS => match self.counter.value {
                 0 => {
