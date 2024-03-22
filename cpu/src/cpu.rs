@@ -5,10 +5,14 @@ mod adc;
 mod and;
 mod asl;
 mod bcc;
+mod bcs;
+mod beq;
 mod bit;
+mod bmi;
 mod bne;
 mod bpl;
 mod bvc;
+mod bvs;
 mod cmp;
 mod cpx;
 mod cpy;
@@ -358,9 +362,13 @@ impl CPU {
             opcode::RTS => self.RTS(data),
 
             opcode::BCC => self.BCC(data),
+            opcode::BCS => self.BCS(data),
+            opcode::BEQ => self.BEQ(data),
+            opcode::BMI => self.BMI(data),
             opcode::BNE => self.BNE(data),
             opcode::BPL => self.BPL(data),
             opcode::BVC => self.BVC(data),
+            opcode::BVS => self.BVS(data),
             _ => todo!("Opcode {}", self.opcode),
         }
     }
