@@ -28,6 +28,7 @@ mod pla;
 mod plp;
 mod rol;
 mod ror;
+mod rts;
 mod sbc;
 mod sta;
 mod stx;
@@ -350,6 +351,7 @@ impl CPU {
             opcode::JMP_IND => self.JMP(AddressingMode::Indirect, data),
 
             opcode::JSR => self.JSR(data),
+            opcode::RTS => self.RTS(data),
             _ => todo!("Opcode {}", self.opcode),
         }
     }

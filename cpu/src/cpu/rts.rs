@@ -3,28 +3,29 @@ use crate::addressing;
 
 #[allow(non_snake_case)]
 impl CPU {
-    pub(super) fn JSR(&mut self, data: &mut CPUData) {
-        let mut map = addressing::absolute();
-        map.insert(2, |cpu, data| {
-            addressing::methods::create_address_from_data_save_addr(cpu, data);
-            (cpu.pc, _) = cpu.pc.overflowing_sub(1);
+    pub(super) fn RTS(&mut self, data: &mut CPUData) {
+        let mut map = addressing::implied();
 
+        map.insert(0, |cpu, _| {
+            cpu.sp += 1;
+        });
+        map.insert(1, |cpu, data| {
             data.pins.address = (0x01_u16 << 8) | cpu.sp as u16;
-            (cpu.sp, _) = cpu.sp.overflowing_sub(1);
-
-            data.pins.data = ((cpu.pc & 0xFF00) >> 8) as u8;
-            data.pins.rw = ReadWrite::W;
+            data.pins.rw = ReadWrite::R;
+        });
+        map.insert(2, |cpu, data| {
+            cpu.temp16 = data.pins.data as u16;
+            cpu.sp += 1;
         });
         map.insert(3, |cpu, data| {
             data.pins.address = (0x01_u16 << 8) | cpu.sp as u16;
-            (cpu.sp, _) = cpu.sp.overflowing_sub(1);
-
-            data.pins.data = (cpu.pc & 0xFF) as u8;
-            data.pins.rw = ReadWrite::W;
+            data.pins.rw = ReadWrite::R;
         });
-        map.insert(4, |_, _| {});
-        map.insert(5, |cpu, _| {
+        map.insert(4, |cpu, data| {
+            addressing::methods::create_address_from_data_save_addr(cpu, data);
             cpu.pc = cpu.temp16;
+        });
+        map.insert(5, |cpu, _| {
             cpu.instruction_finish();
         });
 
@@ -38,15 +39,16 @@ mod tests {
     use crate::{opcode, CPUData, ReadWrite, CPU};
 
     #[test]
-    fn JSR() {
+    fn RTS() {
         let mut data = CPUData::default();
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.pc = 0x0000;
+        cpu.sp = 0xFD;
 
-        data.mem.data[0x0000] = opcode::JSR;
-        data.mem.data[0x0001] = 0x07;
-        data.mem.data[0x0002] = 0xD0;
+        data.mem.data[0x0000] = opcode::RTS;
+        data.mem.data[0x01FF] = 0xD0;
+        data.mem.data[0x01FE] = 0x07;
 
         for _ in 0..=15 {
             cpu.tick(&mut data);
@@ -59,8 +61,7 @@ mod tests {
             }
         }
 
-        assert_eq!(data.mem.data[0x01FF], 0x00);
-        assert_eq!(data.mem.data[0x01FE], 0x02);
+        assert_eq!(cpu.sp, 0xFF);
         assert_eq!(cpu.pc, 0xD007);
     }
 }

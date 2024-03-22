@@ -156,3 +156,4 @@ pub const JMP_ABS: u8 = 0x4C;
 pub const JMP_IND: u8 = 0x6C;
 
 pub const JSR: u8 = 0x20;
+pub const RTS: u8 = 0x60;
