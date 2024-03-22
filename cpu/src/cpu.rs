@@ -16,6 +16,7 @@ mod inc;
 mod inx;
 mod iny;
 mod jmp;
+mod jsr;
 mod lda;
 mod ldx;
 mod ldy;
@@ -347,6 +348,8 @@ impl CPU {
 
             opcode::JMP_ABS => self.JMP(AddressingMode::Absolute, data),
             opcode::JMP_IND => self.JMP(AddressingMode::Indirect, data),
+
+            opcode::JSR => self.JSR(data),
             _ => todo!("Opcode {}", self.opcode),
         }
     }
