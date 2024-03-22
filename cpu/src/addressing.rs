@@ -146,6 +146,43 @@ pub(crate) fn indirect_y() -> CaseHashMap {
     map
 }
 
+pub(crate) fn branch_clear(value: bool) -> CaseHashMap {
+    let mut map: CaseHashMap = HashMap::new();
+    map.insert(0, |_, _| {});
+
+    if value {
+        map.insert(1, |cpu, _| {
+            (cpu.pc, _) = cpu.pc.overflowing_add(1);
+            cpu.instruction_finish();
+        });
+    } else {
+        map.insert(1, methods::get_current_byte);
+        map.insert(2, |cpu, data| {
+            let signed_data = data.pins.data as i8;
+            let old_pc = cpu.pc;
+            let amount = signed_data.unsigned_abs() as u16;
+
+            if signed_data < 0 {
+                // Negative
+                (cpu.pc, _) = cpu.pc.overflowing_sub(amount);
+            } else {
+                // Positive / Zero
+                (cpu.pc, _) = cpu.pc.overflowing_add(amount);
+            }
+
+            if (old_pc & 0xFF00) == (cpu.pc & 0xFF00) {
+                // Don't need extra cycle for page crossing
+                cpu.instruction_finish();
+            }
+        });
+        map.insert(3, |cpu, _| {
+            cpu.instruction_finish();
+        });
+    }
+
+    map
+}
+
 pub mod methods {
     use super::{CPUData, CaseFunction, ReadWrite, CPU};
 

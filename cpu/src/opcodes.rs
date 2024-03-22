@@ -157,3 +157,12 @@ pub const JMP_IND: u8 = 0x6C;
 
 pub const JSR: u8 = 0x20;
 pub const RTS: u8 = 0x60;
+
+pub const BCC: u8 = 0x90;
+pub const BCS: u8 = 0xB0;
+pub const BEQ: u8 = 0xF0;
+pub const BMI: u8 = 0x30;
+pub const BNE: u8 = 0xD0;
+pub const BPL: u8 = 0x10;
+pub const BVC: u8 = 0x50;
+pub const BVS: u8 = 0x70;

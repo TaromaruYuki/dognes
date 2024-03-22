@@ -4,7 +4,11 @@ use bitflags::bitflags;
 mod adc;
 mod and;
 mod asl;
+mod bcc;
 mod bit;
+mod bne;
+mod bpl;
+mod bvc;
 mod cmp;
 mod cpx;
 mod cpy;
@@ -166,7 +170,7 @@ impl CPU {
         data.state = self.state;
     }
 
-    fn instruction_finish(&mut self) {
+    pub(crate) fn instruction_finish(&mut self) {
         self.state = CPUState::Fetch;
         self.counter.reset();
     }
@@ -352,6 +356,11 @@ impl CPU {
 
             opcode::JSR => self.JSR(data),
             opcode::RTS => self.RTS(data),
+
+            opcode::BCC => self.BCC(data),
+            opcode::BNE => self.BNE(data),
+            opcode::BPL => self.BPL(data),
+            opcode::BVC => self.BVC(data),
             _ => todo!("Opcode {}", self.opcode),
         }
     }
