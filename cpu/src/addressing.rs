@@ -101,6 +101,17 @@ pub(crate) fn absolute_y() -> CaseHashMap {
     map
 }
 
+pub(crate) fn indirect() -> CaseHashMap {
+    let mut map: CaseHashMap = HashMap::new();
+
+    map.insert(0, methods::get_current_byte);
+    map.insert(1, methods::get_second_current_byte);
+    map.insert(2, methods::get_byte_from_temp16);
+    map.insert(3, methods::get_second_byte_from_temp16);
+
+    map
+}
+
 pub(crate) fn indirect_x() -> CaseHashMap {
     let mut map: CaseHashMap = HashMap::new();
 
@@ -186,6 +197,18 @@ pub mod methods {
     pub fn get_byte_from_data_save_addr(cpu: &mut CPU, data: &mut CPUData) {
         cpu.temp16 = data.pins.data as u16;
         get_byte_from_data(cpu, data);
+    }
+
+    pub fn get_byte_from_temp16(cpu: &mut CPU, data: &mut CPUData) {
+        create_address_from_data_save_addr(cpu, data);
+        (cpu.temp16, _) = cpu.temp16.overflowing_add(1);
+        data.pins.rw = ReadWrite::R;
+    }
+
+    pub fn get_second_byte_from_temp16(cpu: &mut CPU, data: &mut CPUData) {
+        data.pins.address = cpu.temp16;
+        data.pins.rw = ReadWrite::R;
+        cpu.temp16 = data.pins.data as u16;
     }
 
     pub fn get_byte_from_data(_cpu: &mut CPU, data: &mut CPUData) {

@@ -15,6 +15,7 @@ mod eor;
 mod inc;
 mod inx;
 mod iny;
+mod jmp;
 mod lda;
 mod ldx;
 mod ldy;
@@ -344,24 +345,8 @@ impl CPU {
             opcode::ROR_ABS => self.ROR(AddressingMode::Absolute, data),
             opcode::ROR_ABX => self.ROR(AddressingMode::AbsoluteX, data),
 
-            opcode::JMP_ABS => match self.counter.value {
-                0 => {
-                    data.pins.address = self.pc;
-                    data.pins.rw = ReadWrite::R;
-                    self.pc += 1;
-                }
-                1 => {
-                    self.temp16 = data.pins.data as u16;
-                    data.pins.address = self.pc;
-                    data.pins.rw = ReadWrite::R;
-                }
-                2 => {
-                    let addr: u16 = self.temp16 | ((data.pins.data as u16) << 8);
-                    self.pc = addr;
-                    self.instruction_finish();
-                }
-                _ => panic!("Should never reach."),
-            },
+            opcode::JMP_ABS => self.JMP(AddressingMode::Absolute, data),
+            opcode::JMP_IND => self.JMP(AddressingMode::Indirect, data),
             _ => todo!("Opcode {}", self.opcode),
         }
     }

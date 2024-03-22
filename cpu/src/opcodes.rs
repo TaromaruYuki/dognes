@@ -153,3 +153,4 @@ pub const ROR_ABS: u8 = 0x6E;
 pub const ROR_ABX: u8 = 0x7E;
 
 pub const JMP_ABS: u8 = 0x4C;
+pub const JMP_IND: u8 = 0x6C;
