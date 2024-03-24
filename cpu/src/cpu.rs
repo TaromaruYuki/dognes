@@ -33,6 +33,7 @@ mod lda;
 mod ldx;
 mod ldy;
 mod lsr;
+mod nop;
 mod ora;
 mod pha;
 mod php;
@@ -385,6 +386,8 @@ impl CPU {
             opcode::SEC => self.SEC(data),
             opcode::SED => self.SED(data),
             opcode::SEI => self.SEI(data),
+
+            opcode::NOP => self.NOP(data),
             _ => todo!("Opcode {}", self.opcode),
         }
     }
