@@ -13,6 +13,10 @@ mod bne;
 mod bpl;
 mod bvc;
 mod bvs;
+mod clc;
+mod cld;
+mod cli;
+mod clv;
 mod cmp;
 mod cpx;
 mod cpy;
@@ -369,6 +373,11 @@ impl CPU {
             opcode::BPL => self.BPL(data),
             opcode::BVC => self.BVC(data),
             opcode::BVS => self.BVS(data),
+
+            opcode::CLC => self.CLC(data),
+            opcode::CLD => self.CLD(data),
+            opcode::CLI => self.CLI(data),
+            opcode::CLV => self.CLV(data),
             _ => todo!("Opcode {}", self.opcode),
         }
     }

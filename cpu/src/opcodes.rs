@@ -1,3 +1,5 @@
+// http://6502.org/users/obelisk/6502/instructions.html
+
 pub const LDA_IM: u8 = 0xA9;
 pub const LDA_ZP: u8 = 0xA5;
 pub const LDA_ZPX: u8 = 0xB5;
@@ -166,3 +168,18 @@ pub const BNE: u8 = 0xD0;
 pub const BPL: u8 = 0x10;
 pub const BVC: u8 = 0x50;
 pub const BVS: u8 = 0x70;
+
+pub const CLC: u8 = 0x18;
+pub const CLD: u8 = 0xD8;
+pub const CLI: u8 = 0x58;
+pub const CLV: u8 = 0xB8;
+
+pub const SEC: u8 = 0x38;
+pub const SED: u8 = 0xF8;
+pub const SEI: u8 = 0x78;
+
+pub const BRK: u8 = 0x00;
+
+pub const NOP: u8 = 0xEA;
+
+pub const RTI: u8 = 0x40;
