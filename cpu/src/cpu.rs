@@ -391,4 +391,22 @@ impl CPU {
             _ => todo!("Opcode {}", self.opcode),
         }
     }
+
+    fn irq(&mut self) {
+        let mut map = addressing::implied();
+        map.insert(0, |cpu, data| {
+            data.pins.address = (0x01_u16 << 8) | cpu.sp as u16;
+            (cpu.sp, _) = cpu.sp.overflowing_sub(1);
+
+            data.pins.data = ((cpu.pc & 0xFF00) >> 8) as u8;
+            data.pins.rw = ReadWrite::W;
+        });
+        map.insert(1, |cpu, data| {
+            data.pins.address = (0x01_u16 << 8) | cpu.sp as u16;
+            (cpu.sp, _) = cpu.sp.overflowing_sub(1);
+
+            data.pins.data = (cpu.pc & 0xFF) as u8;
+            data.pins.rw = ReadWrite::W;
+        });
+    }
 }
