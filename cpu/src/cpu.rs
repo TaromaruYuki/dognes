@@ -42,6 +42,9 @@ mod rol;
 mod ror;
 mod rts;
 mod sbc;
+mod sec;
+mod sed;
+mod sei;
 mod sta;
 mod stx;
 mod sty;
@@ -378,6 +381,10 @@ impl CPU {
             opcode::CLD => self.CLD(data),
             opcode::CLI => self.CLI(data),
             opcode::CLV => self.CLV(data),
+
+            opcode::SEC => self.SEC(data),
+            opcode::SED => self.SED(data),
+            opcode::SEI => self.SEI(data),
             _ => todo!("Opcode {}", self.opcode),
         }
     }
