@@ -93,6 +93,7 @@ mod tests {
         let mut data = CPUData::default();
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
+        cpu.state = crate::cpu::CPUState::Fetch;
         cpu.pc = 0x0000;
         cpu.a = 0x12;
         cpu.ps.set(StatusFlag::C, true);
@@ -120,6 +121,7 @@ mod tests {
         let mut data = CPUData::default();
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
+        cpu.state = crate::cpu::CPUState::Fetch;
         cpu.pc = 0x0000;
         cpu.ps.set(StatusFlag::C, true);
 
@@ -148,6 +150,7 @@ mod tests {
         let mut data = CPUData::default();
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
+        cpu.state = crate::cpu::CPUState::Fetch;
         cpu.pc = 0x0000;
         cpu.x = 0x5;
         cpu.ps.set(StatusFlag::C, true);
@@ -177,6 +180,7 @@ mod tests {
         let mut data = CPUData::default();
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
+        cpu.state = crate::cpu::CPUState::Fetch;
         cpu.pc = 0x0000;
         cpu.ps.set(StatusFlag::C, true);
 
@@ -206,6 +210,7 @@ mod tests {
         let mut data = CPUData::default();
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
+        cpu.state = crate::cpu::CPUState::Fetch;
         cpu.pc = 0x0000;
         cpu.x = 0x09;
         cpu.ps.set(StatusFlag::C, true);

@@ -94,6 +94,7 @@ mod tests {
         let mut data = CPUData::default();
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
+        cpu.state = crate::cpu::CPUState::Fetch;
         cpu.pc = 0x0000;
         cpu.a = 0x12;
 
@@ -120,6 +121,7 @@ mod tests {
         let mut data = CPUData::default();
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
+        cpu.state = crate::cpu::CPUState::Fetch;
         cpu.pc = 0x0000;
 
         data.mem.data[0x0000] = opcode::LSR_ZP;
@@ -147,6 +149,7 @@ mod tests {
         let mut data = CPUData::default();
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
+        cpu.state = crate::cpu::CPUState::Fetch;
         cpu.pc = 0x0000;
         cpu.x = 0x5;
 
@@ -175,6 +178,7 @@ mod tests {
         let mut data = CPUData::default();
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
+        cpu.state = crate::cpu::CPUState::Fetch;
         cpu.pc = 0x0000;
 
         data.mem.data[0x0000] = opcode::LSR_ABS;
@@ -203,6 +207,7 @@ mod tests {
         let mut data = CPUData::default();
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
+        cpu.state = crate::cpu::CPUState::Fetch;
         cpu.pc = 0x0000;
         cpu.x = 0x09;
 

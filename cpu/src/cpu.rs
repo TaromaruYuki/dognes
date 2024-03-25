@@ -83,6 +83,7 @@ pub enum CPUState {
     Execute,
     Halted,
     Interrupt,
+    Reset,
 }
 
 impl ToString for CPUState {
@@ -92,6 +93,7 @@ impl ToString for CPUState {
             CPUState::Execute => "E".to_string(),
             CPUState::Halted => "H".to_string(),
             CPUState::Interrupt => "I".to_string(),
+            CPUState::Reset => "R".to_string(),
         }
     }
 }
@@ -162,13 +164,12 @@ pub struct CPU {
 
 impl CPU {
     pub fn reset(&mut self, data: &mut CPUData) {
-        self.pc = 0xFFFC;
         self.sp = 0xFF;
         self.ps = StatusFlag::empty();
         self.a = 0;
         self.x = 0;
         self.y = 0;
-        self.state = CPUState::Fetch;
+        self.state = CPUState::Reset;
         data.mem.reset();
         self.counter.value = 0;
     }
@@ -188,6 +189,7 @@ impl CPU {
 
                     self.run_instruction(map, data);
                 }
+                CPUState::Reset => self.reset_state(data),
             }
             self.counter.tick(&data.clock);
         }
@@ -448,5 +450,29 @@ impl CPU {
         });
 
         map
+    }
+
+    fn reset_state(&mut self, data: &mut CPUData) {
+        match self.counter.value {
+            0 => {
+                data.pins.address = 0xFFFC;
+                data.pins.rw = ReadWrite::R;
+            }
+            1 => {
+                self.pc = data.pins.data as u16;
+                data.pins.address = 0xFFFD;
+                data.pins.rw = ReadWrite::R;
+            }
+            2 => {
+                self.pc |= (data.pins.data as u16) << 8;
+            }
+            3 => {}
+            4 => {}
+            5 => {}
+            6 => {
+                self.instruction_finish();
+            }
+            _ => panic!("Should not reach"),
+        }
     }
 }
