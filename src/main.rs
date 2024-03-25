@@ -1,35 +1,21 @@
+use raylib::prelude::*;
+
+const NTSC_WIDTH: i32 = 256;
+const NTSC_HEIGHT: i32 = 224;
+const SCALE: i32 = 3;
+
 fn main() {
-    let mut data = cpu::CPUData::default();
-    let mut cpu = cpu::CPU::default();
-    cpu.reset(&mut data);
+    let (mut rl, thread) = raylib::init()
+        .size(NTSC_WIDTH * SCALE, NTSC_HEIGHT * SCALE)
+        .title("DogNES")
+        .build();
 
-    data.mem.data[0xFFFC] = 0x4C;
-    data.mem.data[0xFFFD] = 0x00;
-    data.mem.data[0xFFFE] = 0x00;
-    data.mem.data[0x0000] = 0xA9;
-    data.mem.data[0x0001] = 69;
+    while !rl.window_should_close() {
+        let mut d = rl.begin_drawing(&thread);
 
-    for _ in 0..=17 {
-        cpu.tick(&mut data);
-
-        if data.clock.state {
-            println!(
-                "Addr: {:#06x}; Data: {:#04x}; RW: {}; Clock: {}; State: {}",
-                data.pins.address,
-                data.pins.data,
-                data.pins.rw.to_string(),
-                data.clock.state,
-                data.state.to_string()
-            );
-        }
-
-        data.clock.tick();
-
-        match data.pins.rw {
-            cpu::ReadWrite::R => data.pins.data = data.mem.data[data.pins.address as usize],
-            cpu::ReadWrite::W => data.mem.data[data.pins.address as usize] = data.pins.data,
-        }
+        d.clear_background(Color::BLACK);
+        d.draw_rectangle(0, 0, SCALE, SCALE, color::Color::RED);
+        d.draw_rectangle(1 * SCALE, 0, SCALE, SCALE, color::Color::GREEN);
+        d.draw_rectangle(2 * SCALE, 0, SCALE, SCALE, color::Color::BLUE);
     }
-
-    println!("Done!");
 }
