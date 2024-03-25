@@ -80,6 +80,7 @@ pub enum CPUState {
     Fetch,
     Execute,
     Halted,
+    Interrupt,
 }
 
 impl ToString for CPUState {
@@ -88,6 +89,7 @@ impl ToString for CPUState {
             CPUState::Fetch => "F".to_string(),
             CPUState::Execute => "E".to_string(),
             CPUState::Halted => "H".to_string(),
+            CPUState::Interrupt => "I".to_string(),
         }
     }
 }
@@ -175,6 +177,7 @@ impl CPU {
                 CPUState::Halted => return,
                 CPUState::Fetch => self.fetch(data),
                 CPUState::Execute => self.execute(data),
+                CPUState::Interrupt => self.irq(data),
             }
             self.counter.tick(&data.clock);
         }
@@ -392,7 +395,11 @@ impl CPU {
         }
     }
 
-    fn irq(&mut self) {
+    fn irq(&mut self, data: &mut CPUData) {
+        if self.ps.contains(StatusFlag::I) {
+            self.instruction_finish();
+        }
+
         let mut map = addressing::implied();
         map.insert(0, |cpu, data| {
             data.pins.address = (0x01_u16 << 8) | cpu.sp as u16;
@@ -408,5 +415,33 @@ impl CPU {
             data.pins.data = (cpu.pc & 0xFF) as u8;
             data.pins.rw = ReadWrite::W;
         });
+        map.insert(2, |cpu, data| {
+            cpu.ps.set(StatusFlag::B, false);
+            cpu.ps.set(StatusFlag::I, true);
+
+            data.pins.address = (0x01_u16 << 8) | cpu.sp as u16;
+            (cpu.sp, _) = cpu.sp.overflowing_sub(1);
+
+            data.pins.data = cpu.ps.bits();
+            data.pins.rw = ReadWrite::W;
+        });
+        map.insert(3, |_, data| {
+            data.pins.address = 0xFFFE;
+            data.pins.rw = ReadWrite::R;
+        });
+        map.insert(4, |cpu, data| {
+            cpu.temp16 = data.pins.data as u16;
+            data.pins.address = 0xFFFF;
+            data.pins.rw = ReadWrite::R;
+        });
+        map.insert(5, |cpu, data| {
+            cpu.temp16 |= (data.pins.data as u16) << 8;
+            cpu.pc = cpu.temp16;
+        });
+        map.insert(6, |cpu, _| {
+            cpu.instruction_finish();
+        });
+
+        self.run_instruction(map, data);
     }
 }
