@@ -42,6 +42,7 @@ mod pla;
 mod plp;
 mod rol;
 mod ror;
+mod rti;
 mod rts;
 mod sbc;
 mod sec;
@@ -401,6 +402,7 @@ impl CPU {
 
             opcode::BRK => self.BRK(data),
             opcode::NOP => self.NOP(data),
+            opcode::RTI => self.RTI(data),
             _ => todo!("Opcode {}", self.opcode),
         }
     }
