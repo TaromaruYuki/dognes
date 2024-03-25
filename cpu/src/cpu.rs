@@ -11,6 +11,7 @@ mod bit;
 mod bmi;
 mod bne;
 mod bpl;
+mod brk;
 mod bvc;
 mod bvs;
 mod clc;
@@ -177,7 +178,15 @@ impl CPU {
                 CPUState::Halted => return,
                 CPUState::Fetch => self.fetch(data),
                 CPUState::Execute => self.execute(data),
-                CPUState::Interrupt => self.irq(data),
+                CPUState::Interrupt => {
+                    if self.ps.contains(StatusFlag::I) {
+                        self.instruction_finish();
+                    }
+
+                    let map = self.irq();
+
+                    self.run_instruction(map, data);
+                }
             }
             self.counter.tick(&data.clock);
         }
@@ -390,16 +399,13 @@ impl CPU {
             opcode::SED => self.SED(data),
             opcode::SEI => self.SEI(data),
 
+            opcode::BRK => self.BRK(data),
             opcode::NOP => self.NOP(data),
             _ => todo!("Opcode {}", self.opcode),
         }
     }
 
-    fn irq(&mut self, data: &mut CPUData) {
-        if self.ps.contains(StatusFlag::I) {
-            self.instruction_finish();
-        }
-
+    fn irq(&mut self) -> addressing::CaseHashMap {
         let mut map = addressing::implied();
         map.insert(0, |cpu, data| {
             data.pins.address = (0x01_u16 << 8) | cpu.sp as u16;
@@ -416,9 +422,6 @@ impl CPU {
             data.pins.rw = ReadWrite::W;
         });
         map.insert(2, |cpu, data| {
-            cpu.ps.set(StatusFlag::B, false);
-            cpu.ps.set(StatusFlag::I, true);
-
             data.pins.address = (0x01_u16 << 8) | cpu.sp as u16;
             (cpu.sp, _) = cpu.sp.overflowing_sub(1);
 
@@ -442,6 +445,6 @@ impl CPU {
             cpu.instruction_finish();
         });
 
-        self.run_instruction(map, data);
+        map
     }
 }
