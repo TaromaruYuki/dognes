@@ -1,4 +1,4 @@
-workspace = { members = ["cpu", "mappers"] }
+workspace = { members = ["cartridge", "cpu", "mappers"] }
 [package]
 name = "n"
 version = "0.1.0"
@@ -9,4 +9,5 @@ edition = "2021"
 [dependencies]
 cpu = { path = "cpu/" }
 mappers = { path = "mappers/" }
+cartridge = { path = "cartridge/" }
 raylib = "3.7.0"

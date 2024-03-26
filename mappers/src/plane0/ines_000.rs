@@ -1,19 +1,21 @@
 use super::super::{Mapper, MapperInfo};
 
 #[allow(non_camel_case_types)]
-struct INES_000 {
+pub struct INES_000 {
     prog_banks: u8,
     char_banks: u8,
 }
 
-impl Mapper for INES_000 {
-    fn new(prog_banks: u8, char_banks: u8) -> Self {
+impl INES_000 {
+    pub fn new(prog_banks: u8, char_banks: u8) -> Self {
         Self {
             prog_banks,
             char_banks,
         }
     }
+}
 
+impl Mapper for INES_000 {
     fn get_prog_banks(&self) -> u8 {
         self.prog_banks
     }

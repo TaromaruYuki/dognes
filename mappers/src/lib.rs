@@ -1,7 +1,6 @@
 mod plane0;
 
-trait Mapper {
-    fn new(prog_banks: u8, char_banks: u8) -> Self;
+pub trait Mapper {
     fn get_prog_banks(&self) -> u8;
     fn get_char_banks(&self) -> u8;
 
@@ -12,7 +11,23 @@ trait Mapper {
     fn ppu_write(&self, mapped_info: &mut MapperInfo) -> bool;
 }
 
-struct MapperInfo {
-    addr: u16,
-    mapped_addr: u16,
+pub struct MapperInfo {
+    pub addr: u16,
+    pub mapped_addr: u16,
+}
+
+impl MapperInfo {
+    pub fn new(addr: u16) -> Self {
+        Self {
+            addr,
+            mapped_addr: 0,
+        }
+    }
+}
+
+pub mod prelude {
+    pub use crate::Mapper;
+    pub use crate::MapperInfo;
+
+    pub use crate::plane0::ines_000::INES_000;
 }
