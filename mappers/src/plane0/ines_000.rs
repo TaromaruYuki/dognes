@@ -1,6 +1,7 @@
 use super::super::{Mapper, MapperInfo};
 
 #[allow(non_camel_case_types)]
+#[derive(Debug)]
 pub struct INES_000 {
     prog_banks: u8,
     char_banks: u8,

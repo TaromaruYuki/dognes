@@ -9,5 +9,6 @@ pub use clock::Clock;
 mod opcodes;
 use opcodes as opcode;
 mod addressing;
+mod nes;
 
 mod nestest;

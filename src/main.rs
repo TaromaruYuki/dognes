@@ -1,5 +1,3 @@
-mod nes;
-
 use raylib::prelude::*;
 
 const NTSC_WIDTH: i32 = 256;

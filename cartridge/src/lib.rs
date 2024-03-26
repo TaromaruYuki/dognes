@@ -5,6 +5,7 @@ use std::{
 
 use mappers::prelude::*;
 
+#[derive(Clone, Debug)]
 pub enum Mirror {
     Horizontal,
     Vertical,
@@ -12,7 +13,7 @@ pub enum Mirror {
     OnescreenHi,
 }
 
-#[allow(non_camel_case_types)]
+#[allow(non_camel_case_types, dead_code)]
 struct iNESHeader {
     name: [u8; 4],
     prog_rom_chunks: u8,
@@ -52,6 +53,13 @@ pub struct CartridgeInfo {
     pub data: u8,
 }
 
+impl CartridgeInfo {
+    pub fn new(address: u16) -> Self {
+        Self { address, data: 0 }
+    }
+}
+
+#[derive(Debug)]
 pub struct Cartridge {
     pub mapper: Box<dyn Mapper>,
 
@@ -112,7 +120,7 @@ impl Cartridge {
         }
     }
 
-    fn cpu_read(&self, cart_info: &mut CartridgeInfo) -> bool {
+    pub fn cpu_read(&self, cart_info: &mut CartridgeInfo) -> bool {
         let mut mapped_info = MapperInfo::new(cart_info.address);
         if self.mapper.cpu_read(&mut mapped_info) {
             cart_info.data = self.prog_mem[mapped_info.mapped_addr as usize];
@@ -123,7 +131,7 @@ impl Cartridge {
         false
     }
 
-    fn cpu_write(&mut self, cart_info: &mut CartridgeInfo) -> bool {
+    pub fn cpu_write(&mut self, cart_info: &mut CartridgeInfo) -> bool {
         let mut mapped_info = MapperInfo::new(cart_info.address);
         if self.mapper.cpu_write(&mut mapped_info) {
             self.prog_mem[mapped_info.mapped_addr as usize] = cart_info.data;
@@ -134,7 +142,7 @@ impl Cartridge {
         false
     }
 
-    fn ppu_read(&self, cart_info: &mut CartridgeInfo) -> bool {
+    pub fn ppu_read(&self, cart_info: &mut CartridgeInfo) -> bool {
         let mut mapped_info = MapperInfo::new(cart_info.address);
         if self.mapper.ppu_read(&mut mapped_info) {
             cart_info.data = self.char_mem[mapped_info.mapped_addr as usize];
@@ -145,7 +153,7 @@ impl Cartridge {
         false
     }
 
-    fn ppu_write(&mut self, cart_info: &mut CartridgeInfo) -> bool {
+    pub fn ppu_write(&mut self, cart_info: &mut CartridgeInfo) -> bool {
         let mut mapped_info = MapperInfo::new(cart_info.address);
         if self.mapper.ppu_write(&mut mapped_info) {
             self.char_mem[mapped_info.mapped_addr as usize] = cart_info.data;

@@ -1,6 +1,6 @@
 mod plane0;
 
-pub trait Mapper {
+pub trait Mapper: std::fmt::Debug {
     fn get_prog_banks(&self) -> u8;
     fn get_char_banks(&self) -> u8;
 

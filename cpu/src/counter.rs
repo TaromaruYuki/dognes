@@ -1,6 +1,6 @@
 use crate::Clock;
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub(crate) struct Counter {
     pub value: i8,
 }

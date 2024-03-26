@@ -1,4 +1,6 @@
-use crate::{addressing, opcode, Clock, Counter, Memory};
+use std::{cell::RefCell, rc::Rc};
+
+use crate::{addressing, opcode, Clock, Counter};
 use bitflags::bitflags;
 
 mod adc;
@@ -59,6 +61,7 @@ mod txs;
 mod tya;
 
 bitflags! {
+    #[derive(Clone, Debug)]
     pub struct StatusFlag: u8 {
         const C = 0b00000001;
         const Z = 0b00000010;
@@ -76,7 +79,7 @@ impl Default for StatusFlag {
     }
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Default, Clone, Copy, Debug)]
 pub enum CPUState {
     #[default]
     Fetch,
@@ -98,7 +101,7 @@ impl ToString for CPUState {
     }
 }
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub enum ReadWrite {
     #[default]
     R,
@@ -114,17 +117,16 @@ impl ToString for ReadWrite {
     }
 }
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct CPUPins {
     pub address: u16,
     pub data: u8,
     pub rw: ReadWrite,
 }
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct CPUData {
     pub pins: CPUPins,
-    pub mem: Memory,
     pub clock: Clock,
     pub state: CPUState,
 }
@@ -146,7 +148,7 @@ pub enum AddressingMode {
     IndirectIndexed,
 }
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct CPU {
     pub pc: u16,
     pub sp: u8,
@@ -160,18 +162,22 @@ pub struct CPU {
     pub temp8: u8,
     pub temp16: u16,
     pub tempb: bool,
+    nes: Option<Rc<RefCell<crate::nes::NES>>>,
 }
 
 impl CPU {
-    pub fn reset(&mut self, data: &mut CPUData) {
+    pub fn reset(&mut self) {
         self.sp = 0xFF;
         self.ps = StatusFlag::empty();
         self.a = 0;
         self.x = 0;
         self.y = 0;
         self.state = CPUState::Reset;
-        data.mem.reset();
         self.counter.value = 0;
+    }
+
+    pub fn attach_nes(&mut self, nes: Rc<RefCell<crate::nes::NES>>) {
+        self.nes = Some(nes);
     }
 
     pub fn tick(&mut self, data: &mut CPUData) {
