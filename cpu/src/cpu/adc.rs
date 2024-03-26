@@ -96,7 +96,10 @@ mod tests {
 
     #[test]
     fn ADC_IM() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;
@@ -124,7 +127,10 @@ mod tests {
 
     #[test]
     fn ADC_ZP() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;
@@ -152,7 +158,10 @@ mod tests {
 
     #[test]
     fn ADC_ZPX() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;
@@ -182,7 +191,10 @@ mod tests {
 
     #[test]
     fn ADC_ABS() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;
@@ -212,7 +224,10 @@ mod tests {
 
     #[test]
     fn ADC_ABX() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;
@@ -243,7 +258,10 @@ mod tests {
 
     #[test]
     fn ADC_ABX_page() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;
@@ -274,7 +292,10 @@ mod tests {
 
     #[test]
     fn ADC_ABY() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;
@@ -305,7 +326,10 @@ mod tests {
 
     #[test]
     fn ADC_ABY_page() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;
@@ -336,7 +360,10 @@ mod tests {
 
     #[test]
     fn ADC_INX() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;
@@ -368,7 +395,10 @@ mod tests {
 
     #[test]
     fn ADC_INY() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;
@@ -400,7 +430,10 @@ mod tests {
 
     #[test]
     fn ADC_INY_page() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;
@@ -432,7 +465,10 @@ mod tests {
 
     #[test]
     fn ADC_NO_FLAGS() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;
@@ -460,7 +496,10 @@ mod tests {
 
     #[test]
     fn ADC_CARRY_AND_ZERO() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;
@@ -491,7 +530,10 @@ mod tests {
 
     #[test]
     fn ADC_OF_AND_NEG() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;

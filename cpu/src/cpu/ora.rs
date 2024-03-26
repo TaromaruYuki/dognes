@@ -85,7 +85,10 @@ mod tests {
 
     #[test]
     fn ORA_IM() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;
@@ -112,7 +115,10 @@ mod tests {
 
     #[test]
     fn ORA_ZP() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;
@@ -140,7 +146,10 @@ mod tests {
 
     #[test]
     fn ORA_ZPX() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;
@@ -169,7 +178,10 @@ mod tests {
 
     #[test]
     fn ORA_ABS() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;
@@ -198,7 +210,10 @@ mod tests {
 
     #[test]
     fn ORA_ABX() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;
@@ -228,7 +243,10 @@ mod tests {
 
     #[test]
     fn ORA_ABX_page() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;
@@ -258,7 +276,10 @@ mod tests {
 
     #[test]
     fn ORA_ABY() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;
@@ -288,7 +309,10 @@ mod tests {
 
     #[test]
     fn ORA_ABY_page() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;
@@ -318,7 +342,10 @@ mod tests {
 
     #[test]
     fn ORA_INX() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;
@@ -349,7 +376,10 @@ mod tests {
 
     #[test]
     fn ORA_INY() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;
@@ -380,7 +410,10 @@ mod tests {
 
     #[test]
     fn ORA_INY_page() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;

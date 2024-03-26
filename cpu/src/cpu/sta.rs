@@ -79,7 +79,10 @@ mod tests {
 
     #[test]
     fn STA_ZP() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;
@@ -106,7 +109,10 @@ mod tests {
 
     #[test]
     fn STA_ZPX() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;
@@ -134,7 +140,10 @@ mod tests {
 
     #[test]
     fn STA_ABS() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;
@@ -162,7 +171,10 @@ mod tests {
 
     #[test]
     fn STA_ABX() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;
@@ -191,7 +203,10 @@ mod tests {
 
     #[test]
     fn STA_ABY() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;
@@ -220,7 +235,10 @@ mod tests {
 
     #[test]
     fn STA_INX() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;
@@ -251,7 +269,10 @@ mod tests {
 
     #[test]
     fn STA_INY() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;

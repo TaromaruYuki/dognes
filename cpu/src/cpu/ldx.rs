@@ -61,7 +61,10 @@ mod tests {
 
     #[test]
     fn LDX_IM() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;
@@ -87,7 +90,10 @@ mod tests {
 
     #[test]
     fn LDX_ZP() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;
@@ -114,7 +120,10 @@ mod tests {
 
     #[test]
     fn LDX_ZPY() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;
@@ -142,7 +151,10 @@ mod tests {
 
     #[test]
     fn LDX_ABS() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;
@@ -170,7 +182,10 @@ mod tests {
 
     #[test]
     fn LDX_ABY() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;
@@ -199,7 +214,10 @@ mod tests {
 
     #[test]
     fn LDX_ABY_page() {
-        let mut data = CPUData::default();
+        let mut data = CPUData {
+            mem: crate::memory::Memory::new(0xFFFF),
+            ..Default::default()
+        };
         let mut cpu = CPU::default();
         cpu.reset(&mut data);
         cpu.state = crate::cpu::CPUState::Fetch;

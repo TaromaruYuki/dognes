@@ -1,17 +1,23 @@
-const MAX_MEM: usize = (1024 * 64);
-
 pub struct Memory {
-    pub data: [u8; MAX_MEM],
+    pub data: Vec<u8>,
+    size: u32,
 }
 
 impl Default for Memory {
     fn default() -> Self {
-        Self { data: [0; MAX_MEM] }
+        Self::new(1024 * 2)
     }
 }
 
 impl Memory {
+    pub fn new(size: u32) -> Self {
+        Self {
+            data: vec![0; size as usize],
+            size,
+        }
+    }
+
     pub fn reset(&mut self) {
-        self.data = [0; MAX_MEM];
+        self.data = vec![0; self.size as usize];
     }
 }
