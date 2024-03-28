@@ -45,8 +45,16 @@ impl NES {
         self.ticks += 1;
     }
 
-    pub fn ppu_pos(&self) -> (i32, i32) {
-        (self.ppu.cycle as i32, self.ppu.scanline as i32)
+    pub fn ppu_buf(&self) -> ppu::PPUBuf {
+        self.ppu.buf
+    }
+
+    pub fn ppu_frame_complete(&self) -> bool {
+        self.ppu.frame_complete
+    }
+
+    pub fn set_ppu_frame_complete(&mut self, value: bool) {
+        self.ppu.frame_complete = value;
     }
 
     pub fn cpu_read(&self, address: u16) -> u8 {
