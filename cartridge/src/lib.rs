@@ -101,7 +101,7 @@ impl Cartridge {
         let mut prog_mem: Vec<u8> = vec![0; (prog_banks as usize) * 0x4000];
         file.read_exact(&mut prog_mem).unwrap();
 
-        let mut char_mem: Vec<u8> = vec![0; (char_banks as usize) * 0x4000];
+        let mut char_mem: Vec<u8> = vec![0; (char_banks as usize) * 0x2000];
         file.read_exact(&mut char_mem).unwrap();
 
         let mapper = match mapper_id {

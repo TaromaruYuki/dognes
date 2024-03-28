@@ -1,6 +1,6 @@
 use std::{cell::RefCell, rc::Rc};
 
-use crate::{addressing, opcode, Clock, Counter};
+use crate::{addressing, opcode, Counter};
 use bitflags::bitflags;
 
 mod adc;
@@ -127,7 +127,6 @@ pub struct CPUPins {
 #[derive(Default, Debug)]
 pub struct CPUData {
     pub pins: CPUPins,
-    pub clock: Clock,
     pub state: CPUState,
 }
 
@@ -162,7 +161,6 @@ pub struct CPU {
     pub temp8: u8,
     pub temp16: u16,
     pub tempb: bool,
-    nes: Option<Rc<RefCell<crate::nes::NES>>>,
 }
 
 impl CPU {
@@ -176,29 +174,23 @@ impl CPU {
         self.counter.value = 0;
     }
 
-    pub fn attach_nes(&mut self, nes: Rc<RefCell<crate::nes::NES>>) {
-        self.nes = Some(nes);
-    }
-
     pub fn tick(&mut self, data: &mut CPUData) {
-        if data.clock.state {
-            match self.state {
-                CPUState::Halted => return,
-                CPUState::Fetch => self.fetch(data),
-                CPUState::Execute => self.execute(data),
-                CPUState::Interrupt => {
-                    if self.ps.contains(StatusFlag::I) {
-                        self.instruction_finish();
-                    }
-
-                    let map = self.irq();
-
-                    self.run_instruction(map, data);
+        match self.state {
+            CPUState::Halted => return,
+            CPUState::Fetch => self.fetch(data),
+            CPUState::Execute => self.execute(data),
+            CPUState::Interrupt => {
+                if self.ps.contains(StatusFlag::I) {
+                    self.instruction_finish();
                 }
-                CPUState::Reset => self.reset_state(data),
+
+                let map = self.irq();
+
+                self.run_instruction(map, data);
             }
-            self.counter.tick(&data.clock);
+            CPUState::Reset => self.reset_state(data),
         }
+        self.counter.tick();
 
         data.state = self.state;
     }

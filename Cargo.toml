@@ -1,4 +1,4 @@
-workspace = { members = ["cartridge", "cpu", "mappers"] }
+workspace = { members = ["cartridge", "cpu", "mappers", "ppu"] }
 [package]
 name = "n"
 version = "0.1.0"
@@ -8,3 +8,6 @@ edition = "2021"
 
 [dependencies]
 raylib = "3.7.0"
+cpu = { path = "cpu/" }
+cartridge = { path = "cartridge/" }
+rand = "0.8.5"
