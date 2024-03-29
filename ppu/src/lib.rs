@@ -29,11 +29,11 @@ impl Default for PPU {
 
 impl PPU {
     pub fn tick(&mut self) {
-        let (x, y) = ((self.cycle - 1) as i32, self.scanline as i32);
+        // let (x, y) = ((self.cycle - 1) as i32, self.scanline as i32);
 
-        if (0..PAL_WIDTH).contains(&x) && (0..PAL_HEIGHT).contains(&y) {
-            self.buf[y as usize][x as usize] = if rand::random::<bool>() { 0x20 } else { 0x0F }
-        }
+        // if (0..PAL_WIDTH).contains(&x) && (0..PAL_HEIGHT).contains(&y) {
+        //     self.buf[y as usize][x as usize] = if rand::random::<bool>() { 0x20 } else { 0x0F }
+        // }
 
         self.cycle += 1;
 

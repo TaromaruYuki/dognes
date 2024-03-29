@@ -87,6 +87,7 @@ fn main() {
         .build();
 
     while !rl.window_should_close() {
+        let fps = rl.get_fps();
         let delta = rl.get_frame_time();
         if residual_time > 0.0 {
             residual_time -= delta;
@@ -118,6 +119,12 @@ fn main() {
             }
         }
 
-        d.draw_fps(2, 2);
+        d.draw_text(
+            &format!("{fps} FPS"),
+            2,
+            2,
+            8,
+            if fps < 60 { Color::RED } else { Color::GREEN },
+        );
     }
 }
