@@ -1,5 +1,5 @@
 mod cpu;
-pub use cpu::{CPUData, CPUPins, ReadWrite, StatusFlag, CPU};
+pub use cpu::{CPUData, CPUPins, CPUState, ReadWrite, StatusFlag, CPU};
 mod memory;
 pub use memory::Memory;
 mod counter;

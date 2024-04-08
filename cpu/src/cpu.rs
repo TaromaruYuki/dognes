@@ -79,7 +79,7 @@ impl Default for StatusFlag {
     }
 }
 
-#[derive(Default, Clone, Copy, Debug)]
+#[derive(Default, Clone, Copy, Debug, PartialEq)]
 pub enum CPUState {
     #[default]
     Fetch,
@@ -172,6 +172,14 @@ impl CPU {
         self.y = 0;
         self.state = CPUState::Reset;
         self.counter.value = 0;
+    }
+
+    pub fn get_state(&self) -> CPUState {
+        self.state
+    }
+
+    pub fn is_complete(&self) -> bool {
+        self.state == CPUState::Fetch && self.counter.value == 0
     }
 
     pub fn tick(&mut self, data: &mut CPUData) {
