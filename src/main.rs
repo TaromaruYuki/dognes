@@ -12,13 +12,13 @@ fn main() {
     nes.attach_cart(Rc::new(RefCell::new(cart)));
     nes.reset();
 
-    loop {
-        nes.tick();
+    // loop {
+    //     nes.tick();
 
-        if nes.cpu.get_state() == cpu::CPUState::Fetch {
-            break;
-        }
-    }
+    //     if nes.cpu.get_state() == cpu::CPUState::Fetch {
+    //         break;
+    //     }
+    // }
 
     let mut residual_time = 0.0_f32;
     let mut emulation_run = false;
@@ -28,7 +28,7 @@ fn main() {
         .title("DogNES")
         .build();
 
-    rl.set_target_fps(60);
+    // rl.set_target_fps(60);
 
     while !rl.window_should_close() {
         let fps = rl.get_fps();
@@ -54,7 +54,7 @@ fn main() {
                     loop {
                         nes.tick();
 
-                        if nes.cpu.is_complete() {
+                        if nes.cpu_complete() {
                             break;
                         }
                     }
@@ -62,7 +62,7 @@ fn main() {
                     loop {
                         nes.tick();
 
-                        if !nes.cpu.is_complete() {
+                        if !nes.cpu_complete() {
                             break;
                         }
                     }
@@ -79,7 +79,7 @@ fn main() {
                     loop {
                         nes.tick();
 
-                        if nes.cpu.is_complete() {
+                        if nes.cpu_complete() {
                             break;
                         }
                     }

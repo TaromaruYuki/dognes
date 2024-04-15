@@ -1,51 +1,23 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use crate::cpu::{CPUData, CPU};
-use crate::{Memory, ReadWrite};
+use emulator_6502::*;
+
 use cartridge::{Cartridge, CartridgeInfo};
 use ppu::PPU;
 
 #[allow(clippy::upper_case_acronyms, dead_code)]
-#[derive(Default, Debug)]
+#[derive(Debug)]
 pub struct NES {
-    pub cpu: CPU,
-    data: CPUData,
-    memory: Memory,
+    cpu: Rc<RefCell<MOS6502>>,
+    memory: Vec<u8>,
     pub ppu: PPU,
     cartridge: Option<Rc<RefCell<Cartridge>>>,
     ticks: u32,
 }
 
-impl NES {
-    pub fn reset(&mut self) {
-        self.cpu.reset();
-        self.ticks = 0;
-    }
-
-    pub fn attach_cart(&mut self, cart: Rc<RefCell<Cartridge>>) {
-        self.cartridge = Some(cart.clone());
-        self.ppu.attach_cart(cart);
-    }
-
-    pub fn tick(&mut self) {
-        self.ppu.tick();
-
-        if self.ticks % 3 == 0 {
-            self.cpu.tick(&mut self.data);
-
-            match self.data.pins.rw {
-                ReadWrite::R => self.data.pins.data = self.cpu_read(self.data.pins.address),
-                ReadWrite::W => self.cpu_write(self.data.pins.address, self.data.pins.data),
-            }
-
-            self.ticks = 0;
-        }
-
-        self.ticks += 1;
-    }
-
-    pub fn cpu_read(&mut self, address: u16) -> u8 {
+impl Interface6502 for NES {
+    fn read(&mut self, address: u16) -> u8 {
         let mut cart_info = CartridgeInfo::new(address);
 
         if self
@@ -57,7 +29,7 @@ impl NES {
         {
             return cart_info.data;
         } else if (0x0000..0x1FFF).contains(&address) {
-            return self.memory.data[address as usize];
+            return self.memory[address as usize];
         } else if (0x2000..=0x3FFF).contains(&address) {
             return self.ppu.cpu_read(address & 0x0007);
         }
@@ -65,7 +37,7 @@ impl NES {
         0x00
     }
 
-    pub fn cpu_write(&mut self, address: u16, data: u8) {
+    fn write(&mut self, address: u16, data: u8) {
         let mut cart_info = CartridgeInfo::new(address);
         cart_info.data = data;
 
@@ -77,9 +49,54 @@ impl NES {
             .cpu_write(&mut cart_info)
         {
         } else if (0x0000..0x1FFF).contains(&address) {
-            self.memory.data[address as usize] = data;
+            self.memory[address as usize] = data;
         } else if (0x2000..0x3FFF).contains(&address) {
             self.ppu.cpu_write(address & 0x0007, data);
         }
+    }
+}
+
+impl Default for NES {
+    fn default() -> Self {
+        Self {
+            cpu: Rc::default(),
+            memory: vec![0; (1024 * 2 + 1) as usize],
+            ppu: PPU::default(),
+            cartridge: Option::default(),
+            ticks: u32::default(),
+        }
+    }
+}
+
+impl NES {
+    pub fn reset(&mut self) {
+        let cpu = Rc::clone(&self.cpu);
+        cpu.borrow_mut().reset(self);
+        self.ticks = 0;
+    }
+
+    pub fn cpu_complete(&mut self) -> bool {
+        let cpu = Rc::clone(&self.cpu);
+        let cycles_left = cpu.borrow().get_remaining_cycles();
+
+        cycles_left == 0
+    }
+
+    pub fn attach_cart(&mut self, cart: Rc<RefCell<Cartridge>>) {
+        self.cartridge = Some(cart.clone());
+        self.ppu.attach_cart(cart);
+    }
+
+    pub fn tick(&mut self) {
+        self.ppu.tick();
+
+        if self.ticks % 3 == 0 {
+            let cpu = Rc::clone(&self.cpu);
+            cpu.borrow_mut().cycle(self);
+
+            self.ticks = 0;
+        }
+
+        self.ticks += 1;
     }
 }
