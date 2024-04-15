@@ -9,5 +9,6 @@ use opcodes as opcode;
 mod addressing;
 mod nes;
 pub use nes::NES;
+pub use ppu::PAL_PALETTE;
 
 mod nestest;

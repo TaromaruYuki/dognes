@@ -225,7 +225,13 @@ impl CPU {
     }
 
     pub fn run_instruction(&mut self, map: addressing::CaseHashMap, data: &mut CPUData) {
-        (map[&self.counter.value])(self, data);
+        (map.get(&self.counter.value).unwrap_or_else(|| {
+            panic!(
+                "Failed to get instruction cycle '{}' with opcode '{}'",
+                self.counter.value, self.opcode
+            )
+        }))(self, data);
+        // (map[&self.counter.value])(self, data);
     }
 
     fn execute(&mut self, data: &mut CPUData) {

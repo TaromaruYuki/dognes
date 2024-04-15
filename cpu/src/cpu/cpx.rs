@@ -5,10 +5,12 @@ use crate::addressing;
 impl CPU {
     pub(super) fn CPX(&mut self, mode: AddressingMode, data: &mut CPUData) {
         fn cmp_data(cpu: &mut CPU, data: &mut CPUData) {
-            cpu.temp16 = (cpu.x as u16) - (data.pins.data as u16);
+            (cpu.temp16, _) = (cpu.x as u16).overflowing_sub(data.pins.data as u16);
+            // cpu.temp16 = (cpu.x as u16) - (data.pins.data as u16);
             cpu.ps.set(StatusFlag::C, cpu.x >= data.pins.data);
             cpu.ps.set(StatusFlag::Z, (cpu.temp16 & 0xFF) == 0x00);
             cpu.ps.set(StatusFlag::N, cpu.temp16 & 0x80 > 0);
+            cpu.instruction_finish();
         }
 
         match mode {

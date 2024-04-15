@@ -45,7 +45,7 @@ impl NES {
         self.ticks += 1;
     }
 
-    pub fn cpu_read(&self, address: u16) -> u8 {
+    pub fn cpu_read(&mut self, address: u16) -> u8 {
         let mut cart_info = CartridgeInfo::new(address);
 
         if self
