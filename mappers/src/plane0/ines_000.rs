@@ -1,4 +1,4 @@
-use super::super::{Mapper, MapperInfo};
+use super::super::Mapper;
 
 #[allow(non_camel_case_types)]
 #[derive(Debug)]
@@ -25,38 +25,32 @@ impl Mapper for INES_000 {
         self.char_banks
     }
 
-    fn cpu_read(&self, mapped_info: &mut MapperInfo) -> bool {
-        if mapped_info.addr >= 0x8000 {
-            mapped_info.mapped_addr =
-                mapped_info.addr & (if self.prog_banks > 1 { 0x7FFF } else { 0x3FFF });
-            return true;
+    fn cpu_read(&self, address: u16) -> Option<u16> {
+        if address >= 0x8000 {
+            return Some(address & (if self.prog_banks > 1 { 0x7FFF } else { 0x3FFF }));
         }
 
-        false
+        None
     }
 
-    fn cpu_write(&self, mapped_info: &mut MapperInfo) -> bool {
-        self.cpu_read(mapped_info) // It's the same read for write
+    fn cpu_write(&self, address: u16) -> Option<u16> {
+        self.cpu_read(address) // It's the same read for write
     }
 
-    fn ppu_read(&self, mapped_info: &mut MapperInfo) -> bool {
-        if mapped_info.addr <= 0x1FFF {
-            mapped_info.mapped_addr = mapped_info.addr;
-
-            return true;
+    fn ppu_read(&self, address: u16) -> Option<u16> {
+        if address <= 0x1FFF {
+            return Some(address);
         }
 
-        false
+        None
     }
 
-    fn ppu_write(&self, mapped_info: &mut MapperInfo) -> bool {
-        if mapped_info.addr <= 0x1FFF && self.char_banks == 0 {
+    fn ppu_write(&self, address: u16) -> Option<u16> {
+        if address <= 0x1FFF && self.char_banks == 0 {
             // Treat as RAM
-            mapped_info.mapped_addr = mapped_info.addr;
-
-            return true;
+            return Some(address);
         }
 
-        false
+        None
     }
 }

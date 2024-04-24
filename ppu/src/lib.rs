@@ -92,29 +92,29 @@ bitflags! {
 
 bitflags! {
     #[derive(Debug)]
-    struct PPUMask: u8 {
-            const GRAYSCALE = 0b1000_0000;
-            const REND_BG_LEFT = 0b0100_0000;
-            const REND_SPR_LEFT = 0b0010_0000;
-            const REND_BG = 0b0001_0000;
-            const REND_SPR = 0b0000_1000;
-            const ENH_RED = 0b0000_0100;
-            const ENH_GREEN = 0b0000_0010;
-            const ENH_BLUE = 0b0000_0001;
+    pub struct PPUMask: u8 {
+        const GRAYSCALE = 0b0000_0001;
+        const REND_BG_LEFT = 0b0000_0010;
+        const REND_SPR_LEFT = 0b0000_0100;
+        const REND_BG = 0b0000_1000;
+        const REND_SPR = 0b0001_0000;
+        const ENH_RED = 0b0010_0000;
+        const ENH_GREEN = 0b0100_0000;
+        const ENH_BLUE = 0b1000_0000;
     }
 }
 
 bitflags! {
     #[derive(Debug)]
     pub struct PPUControl: u8 {
-        const NAMETBL_X = 0b1000_0000;
-        const NAMETBL_Y = 0b0100_0000;
-        const INC_MODE = 0b0010_0000;
-        const PTRN_SPR = 0b0001_0000;
-        const PTRN_BG = 0b0000_1000;
-        const SPR_SIZE = 0b0000_0100;
-        const SLV_MODE = 0b0000_0010;
-        const EN_NMI = 0b0000_0001;
+        const NAMETBL_X = 0b0000_0001;
+        const NAMETBL_Y = 0b0100_0010;
+        const INC_MODE = 0b0000_0100;
+        const PTRN_SPR = 0b0000_1000;
+        const PTRN_BG = 0b0001_0000;
+        const SPR_SIZE = 0b0010_0000;
+        const SLV_MODE = 0b0100_0000;
+        const EN_NMI = 0b1000_0000;
     }
 }
 
@@ -130,23 +130,23 @@ impl LoopyReg {
     }
 
     pub fn get_coarse_x(&self) -> u8 {
-        ((self.value & 0xF800) >> 11) as u8
+        (self.value & 0x1F) as u8
     }
 
     pub fn get_coarse_y(&self) -> u8 {
-        ((self.value & 0x07C0) >> 6) as u8
+        ((self.value & 0x3E0) >> 5) as u8
     }
 
     pub fn get_nametable_x(&self) -> bool {
-        (self.value & 0x20) > 0
+        (self.value & 0x400) > 0
     }
 
     pub fn get_nametable_y(&self) -> bool {
-        (self.value & 0x10) > 0
+        (self.value & 0x800) > 0
     }
 
     pub fn get_fine_y(&self) -> u8 {
-        ((self.value & 0xE) >> 1) as u8
+        ((self.value & 0x7000) >> 12) as u8
     }
 
     fn set_value(&mut self, value: u8, not_bitmask: u16, shift: u8) {
@@ -154,23 +154,23 @@ impl LoopyReg {
     }
 
     pub fn set_coarse_x(&mut self, value: u8) {
-        self.set_value(value & 0x1F, 0x07FF, 11);
+        self.set_value(value & 0x1F, 0xFFE0, 0);
     }
 
     pub fn set_coarse_y(&mut self, value: u8) {
-        self.set_value(value & 0x1F, 0xF83F, 6);
+        self.set_value(value & 0x1F, 0xFC1F, 5);
     }
 
     pub fn set_nametable_x(&mut self, value: bool) {
-        self.set_value(value as u8, 0xFFDF, 5);
+        self.set_value(value as u8, 0xFBFF, 10);
     }
 
     pub fn set_nametable_y(&mut self, value: bool) {
-        self.set_value(value as u8, 0xFBEF, 4);
+        self.set_value(value as u8, 0xF7FF, 11);
     }
 
     pub fn set_fine_y(&mut self, value: u8) {
-        self.set_value(value & 7, 0xFBF1, 1);
+        self.set_value(value & 7, 0x8FFF, 12);
     }
 
     pub fn increment_data(&mut self, inc_count: u8) {
@@ -195,7 +195,7 @@ pub struct PPU {
     address_latch: u8,
     data_buffer: u8,
     status: PPUStatus,
-    mask: PPUMask,
+    pub mask: PPUMask,
     control: PPUControl,
     vram_addr: LoopyReg,
     tram_addr: LoopyReg,
@@ -255,6 +255,33 @@ impl PPU {
         self.ppu_read(0x3F00 + ((palette as u16) << 2) + (pixel as u16)) & 0x3F
     }
 
+    pub fn get_pattern_table(&self, i: bool, palette: u8) -> [[u8; 128]; 128] {
+        let mut res = [[0_u8; 128]; 128];
+
+        for tile_y in 0_u16..16 {
+            for tile_x in 0_u16..16 {
+                let offset: u16 = tile_y * 256 + tile_x * 16;
+
+                for row in 0_u16..8 {
+                    let mut tile_lsb = self.ppu_read((i as u16) * 0x1000 + offset + row);
+                    let mut tile_msb = self.ppu_read((i as u16) * 0x1000 + offset + row + 0x0008);
+
+                    for col in 0_u16..8 {
+                        let pixel = (tile_lsb & 0x01) + (tile_msb & 0x01);
+
+                        tile_lsb >>= 1;
+                        tile_msb >>= 1;
+
+                        res[(tile_y * 8 + row) as usize][(tile_x * 8 + (7 - col)) as usize] =
+                            self.get_color(palette, pixel);
+                    }
+                }
+            }
+        }
+
+        res
+    }
+
     pub fn cpu_read(&mut self, address: u16) -> u8 {
         match address {
             0x0000 => 0x00,
@@ -290,6 +317,7 @@ impl PPU {
             _ => panic!("Should never reach"),
         }
     }
+
     pub fn cpu_write(&mut self, address: u16, data: u8) {
         match address {
             0x0000 => {
@@ -302,9 +330,9 @@ impl PPU {
             0x0001 => {
                 self.mask = PPUMask::from_bits_retain(data);
             }
-            0x0002 => todo!(),
-            0x0003 => todo!(),
-            0x0004 => todo!(),
+            0x0002 => {}
+            0x0003 => {}
+            0x0004 => {}
             0x0005 => {
                 if self.address_latch == 0 {
                     self.fine_x = data & 0x07;
@@ -343,19 +371,11 @@ impl PPU {
         }
     }
 
-    // TODO: Rustify this function
     pub fn ppu_read(&self, mut address: u16) -> u8 {
         address &= 0x3FFF;
-        let mut cart_info = cartridge::CartridgeInfo::new(address);
 
-        if self
-            .cartridge
-            .as_ref()
-            .unwrap()
-            .borrow()
-            .ppu_read(&mut cart_info)
-        {
-            return cart_info.data;
+        if let Some(data) = self.cartridge.as_ref().unwrap().borrow().ppu_read(address) {
+            return data;
         } else if (0x0000..=0x1FFF).contains(&address) {
             return self.table_pattern[((address & 0x1000) >> 12) as usize]
                 [(address & 0x0FFF) as usize];
@@ -412,15 +432,14 @@ impl PPU {
     }
     pub fn ppu_write(&mut self, mut address: u16, data: u8) {
         address &= 0x3FFF;
-        let mut cart_info = cartridge::CartridgeInfo::new(address);
-        cart_info.data = data;
 
         if self
             .cartridge
             .as_mut()
             .unwrap()
             .borrow_mut()
-            .ppu_write(&mut cart_info)
+            .ppu_write(address, data)
+            .is_some()
         {
         } else if (0x0000..=0x1FFF).contains(&address) {
             self.table_pattern[((address & 0x1000) >> 12) as usize][(address & 0x0FFF) as usize] =
@@ -608,8 +627,7 @@ impl PPU {
                     6 => {
                         let address = ((self.control.contains(PPUControl::PTRN_BG) as u16) << 12)
                             + ((self.bg_next_tile_id as u16) << 4)
-                            + (self.vram_addr.get_fine_y() as u16)
-                            + 8;
+                            + ((self.vram_addr.get_fine_y() as u16) + 8);
 
                         self.bg_next_tile_msb = self.ppu_read(address);
                     }

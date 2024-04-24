@@ -22,6 +22,7 @@ fn main() {
 
     let mut residual_time = 0.0_f32;
     let mut emulation_run = false;
+    let mut palette = 0;
 
     let (mut rl, thread) = raylib::init()
         .size(PAL_WIDTH * SCALE, PAL_HEIGHT * SCALE)
@@ -98,6 +99,14 @@ fn main() {
                 raylib::consts::KeyboardKey::KEY_R => {
                     nes.reset();
                 }
+                raylib::consts::KeyboardKey::KEY_P => {
+                    palette += 1;
+                    palette %= 8;
+                }
+                raylib::consts::KeyboardKey::KEY_B => {
+                    // nes.set_rend_bg(true);
+                    println!("Breakpoint")
+                }
                 _ => {}
             }
         }
@@ -119,12 +128,37 @@ fn main() {
             }
         }
 
+        // let pattern_table_0 = nes.ppu.get_pattern_table(false, palette);
+        // let pattern_table_1 = nes.ppu.get_pattern_table(true, palette);
+
+        // for y in 0..128 {
+        //     for x in 0..128 {
+        //         let color = PAL_PALETTE[(pattern_table_0[y as usize][x as usize]) as usize];
+        //         d.draw_pixel(x, y, Color::new(color.0, color.1, color.2, 255));
+        //     }
+        // }
+
+        // for y in 0..128 {
+        //     for x in 0..128 {
+        //         let color = PAL_PALETTE[(pattern_table_1[y as usize][x as usize]) as usize];
+        //         d.draw_pixel(x + 128, y, Color::new(color.0, color.1, color.2, 255));
+        //     }
+        // }
+
         d.draw_text(
             &format!("{fps} FPS"),
             2,
             2,
             8 * SCALE,
             if fps < 60 { Color::RED } else { Color::GREEN },
+        );
+
+        d.draw_text(
+            &format!("PC: {:#06x}", nes.get_pc()),
+            2,
+            10,
+            8 * SCALE,
+            Color::GREEN,
         );
     }
 }

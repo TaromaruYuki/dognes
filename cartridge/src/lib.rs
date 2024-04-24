@@ -5,7 +5,7 @@ use std::{
 
 use mappers::prelude::*;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Mirror {
     Horizontal,
     Vertical,
@@ -14,6 +14,7 @@ pub enum Mirror {
 }
 
 #[allow(non_camel_case_types, dead_code)]
+#[derive(Debug)]
 struct iNESHeader {
     name: [u8; 4],
     prog_rom_chunks: u8,
@@ -48,17 +49,6 @@ impl iNESHeader {
     }
 }
 
-pub struct CartridgeInfo {
-    pub address: u16,
-    pub data: u8,
-}
-
-impl CartridgeInfo {
-    pub fn new(address: u16) -> Self {
-        Self { address, data: 0 }
-    }
-}
-
 #[derive(Debug)]
 pub struct Cartridge {
     pub mapper: Box<dyn Mapper>,
@@ -82,9 +72,11 @@ impl Cartridge {
         file.read_exact(&mut header_raw).unwrap();
 
         let header = iNESHeader::from_array(header_raw);
+        println!("{:#?}", header);
 
         // ignore trainer
         if header.mapper1 & 0x04 > 0 {
+            println!("Ignoring trainer");
             file.seek(std::io::SeekFrom::Current(512)).unwrap();
         }
 
@@ -94,9 +86,18 @@ impl Cartridge {
         } else {
             Mirror::Horizontal
         };
+        println!(
+            "Mapper ID: {mapper_id}\nMirror: {}",
+            if mirror == Mirror::Vertical {
+                "Vertical"
+            } else {
+                "Horizontal"
+            }
+        );
 
         let prog_banks = header.prog_rom_chunks;
         let char_banks = header.char_rom_chunks;
+        println!("Program Banks: {prog_banks}\nChar Banks: {char_banks}");
 
         let mut prog_mem: Vec<u8> = vec![0; (prog_banks as usize) * 0x4000];
         file.read_exact(&mut prog_mem).unwrap();
@@ -120,47 +121,39 @@ impl Cartridge {
         }
     }
 
-    pub fn cpu_read(&self, cart_info: &mut CartridgeInfo) -> bool {
-        let mut mapped_info = MapperInfo::new(cart_info.address);
-        if self.mapper.cpu_read(&mut mapped_info) {
-            cart_info.data = self.prog_mem[mapped_info.mapped_addr as usize];
-
-            return true;
+    pub fn cpu_read(&self, address: u16) -> Option<u8> {
+        if let Some(mapped_addr) = self.mapper.cpu_read(address) {
+            return Some(self.prog_mem[mapped_addr as usize]);
         }
 
-        false
+        None
     }
 
-    pub fn cpu_write(&mut self, cart_info: &mut CartridgeInfo) -> bool {
-        let mut mapped_info = MapperInfo::new(cart_info.address);
-        if self.mapper.cpu_write(&mut mapped_info) {
-            self.prog_mem[mapped_info.mapped_addr as usize] = cart_info.data;
+    pub fn cpu_write(&mut self, address: u16, data: u8) -> Option<()> {
+        if let Some(mapped_addr) = self.mapper.cpu_write(address) {
+            self.prog_mem[mapped_addr as usize] = data;
 
-            return true;
+            return Some(());
         }
 
-        false
+        None
     }
 
-    pub fn ppu_read(&self, cart_info: &mut CartridgeInfo) -> bool {
-        let mut mapped_info = MapperInfo::new(cart_info.address);
-        if self.mapper.ppu_read(&mut mapped_info) {
-            cart_info.data = self.char_mem[mapped_info.mapped_addr as usize];
-
-            return true;
+    pub fn ppu_read(&self, address: u16) -> Option<u8> {
+        if let Some(mapped_addr) = self.mapper.ppu_read(address) {
+            return Some(self.char_mem[mapped_addr as usize]);
         }
 
-        false
+        None
     }
 
-    pub fn ppu_write(&mut self, cart_info: &mut CartridgeInfo) -> bool {
-        let mut mapped_info = MapperInfo::new(cart_info.address);
-        if self.mapper.ppu_write(&mut mapped_info) {
-            self.char_mem[mapped_info.mapped_addr as usize] = cart_info.data;
+    pub fn ppu_write(&mut self, address: u16, data: u8) -> Option<()> {
+        if let Some(mapped_addr) = self.mapper.ppu_write(address) {
+            self.char_mem[mapped_addr as usize] = data;
 
-            return true;
+            return Some(());
         }
 
-        false
+        None
     }
 }
