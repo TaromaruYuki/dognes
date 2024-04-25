@@ -21,7 +21,7 @@ impl Interface6502 for NES {
         if let Some(data) = self.cartridge.as_ref().unwrap().borrow().cpu_read(address) {
             return data;
         } else if (0x0000..=0x1FFF).contains(&address) {
-            return self.memory[address as usize];
+            return self.memory[(address & 0x07FF) as usize];
         } else if (0x2000..=0x3FFF).contains(&address) {
             return self.ppu.cpu_read(address & 0x0007);
         }
@@ -39,7 +39,7 @@ impl Interface6502 for NES {
             .is_some()
         {
         } else if (0x0000..=0x1FFF).contains(&address) {
-            self.memory[address as usize] = data;
+            self.memory[(address & 0x07FF) as usize] = data;
         } else if (0x2000..=0x3FFF).contains(&address) {
             self.ppu.cpu_write(address & 0x0007, data);
         }
@@ -77,10 +77,6 @@ impl NES {
         let cycles_left = cpu.borrow().get_remaining_cycles();
 
         cycles_left == 0
-    }
-
-    pub fn set_rend_bg(&mut self, value: bool) {
-        self.ppu.mask.set(ppu::PPUMask::REND_BG, value);
     }
 
     pub fn attach_cart(&mut self, cart: Rc<RefCell<Cartridge>>) {

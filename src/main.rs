@@ -4,7 +4,7 @@ use std::{cell::RefCell, rc::Rc};
 
 const PAL_WIDTH: i32 = 256;
 const PAL_HEIGHT: i32 = 240;
-const SCALE: i32 = 1;
+const SCALE: i32 = 3;
 
 fn main() {
     let cart = cartridge::Cartridge::new("dk.nes".to_string());
@@ -117,14 +117,14 @@ fn main() {
         for y in 0..PAL_HEIGHT {
             for x in 0..PAL_WIDTH {
                 let color_raw = PAL_PALETTE[nes.ppu.buf[y as usize][x as usize] as usize];
-                d.draw_pixel(x, y, Color::new(color_raw.0, color_raw.1, color_raw.2, 255));
-                // d.draw_rectangle(
-                //     x * SCALE,
-                //     y * SCALE,
-                //     SCALE,
-                //     SCALE,
-                //     PAL_PALETTE[buf[y as usize][x as usize] as usize],
-                // );
+                // d.draw_pixel(x, y, Color::new(color_raw.0, color_raw.1, color_raw.2, 255));
+                d.draw_rectangle(
+                    x * SCALE,
+                    y * SCALE,
+                    SCALE,
+                    SCALE,
+                    Color::new(color_raw.0, color_raw.1, color_raw.2, 255),
+                );
             }
         }
 
@@ -156,7 +156,7 @@ fn main() {
         d.draw_text(
             &format!("PC: {:#06x}", nes.get_pc()),
             2,
-            10,
+            2 + (8 * SCALE),
             8 * SCALE,
             Color::GREEN,
         );

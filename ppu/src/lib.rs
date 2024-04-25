@@ -195,7 +195,7 @@ pub struct PPU {
     address_latch: u8,
     data_buffer: u8,
     status: PPUStatus,
-    pub mask: PPUMask,
+    mask: PPUMask,
     control: PPUControl,
     vram_addr: LoopyReg,
     tram_addr: LoopyReg,
@@ -554,6 +554,7 @@ impl PPU {
                 (ppu.bg_shifter_pattern_lo & 0xFF00) | (ppu.bg_next_tile_lsb as u16);
             ppu.bg_shifter_pattern_hi =
                 (ppu.bg_shifter_pattern_hi & 0xFF00) | (ppu.bg_next_tile_msb as u16);
+
             ppu.bg_shifter_attrib_lo = (ppu.bg_shifter_attrib_lo & 0xFF00)
                 | (if (ppu.bg_next_tile_attrib & 0b01) > 0 {
                     0xFF
