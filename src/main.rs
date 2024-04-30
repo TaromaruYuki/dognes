@@ -7,7 +7,7 @@ const PAL_HEIGHT: i32 = 240;
 const SCALE: i32 = 3;
 
 fn main() {
-    let cart = cartridge::Cartridge::new("dk.nes".to_string());
+    let cart = cartridge::Cartridge::new("ic.nes".to_string());
     let mut nes = cpu::NES::default();
     nes.attach_cart(Rc::new(RefCell::new(cart)));
     nes.reset();
@@ -23,13 +23,19 @@ fn main() {
     let mut residual_time = 0.0_f32;
     let mut emulation_run = false;
     let mut palette = 0;
+    let mut found_demo = false;
 
     let (mut rl, thread) = raylib::init()
         .size(PAL_WIDTH * SCALE, PAL_HEIGHT * SCALE)
         .title("DogNES")
         .build();
 
-    // rl.set_target_fps(60);
+    let camera = Camera2D {
+        zoom: SCALE as f32,
+        ..Default::default()
+    };
+
+    rl.set_target_fps(60);
 
     while !rl.window_should_close() {
         let fps = rl.get_fps();
@@ -43,6 +49,12 @@ fn main() {
                 residual_time += (1.0 / 60.0) - delta;
                 loop {
                     nes.tick();
+
+                    if nes.program_counter() == 0xC74B && !found_demo {
+                        println!("Demo");
+                        found_demo = true;
+                    }
+
                     if nes.ppu.frame_complete {
                         break;
                     }
@@ -114,17 +126,19 @@ fn main() {
         let mut d = rl.begin_drawing(&thread);
         d.clear_background(Color::BLACK);
 
+        let mut mode_2d = d.begin_mode2D(camera);
+
         for y in 0..PAL_HEIGHT {
             for x in 0..PAL_WIDTH {
                 let color_raw = PAL_PALETTE[nes.ppu.buf[y as usize][x as usize] as usize];
-                // d.draw_pixel(x, y, Color::new(color_raw.0, color_raw.1, color_raw.2, 255));
-                d.draw_rectangle(
-                    x * SCALE,
-                    y * SCALE,
-                    SCALE,
-                    SCALE,
-                    Color::new(color_raw.0, color_raw.1, color_raw.2, 255),
-                );
+                mode_2d.draw_pixel(x, y, Color::new(color_raw.0, color_raw.1, color_raw.2, 255));
+                // mode_2d.draw_rectangle(
+                //     x * SCALE,
+                //     y * SCALE,
+                //     SCALE,
+                //     SCALE,
+                //     Color::new(color_raw.0, color_raw.1, color_raw.2, 255),
+                // );
             }
         }
 
@@ -145,19 +159,19 @@ fn main() {
         //     }
         // }
 
-        d.draw_text(
+        mode_2d.draw_text(
             &format!("{fps} FPS"),
             2,
             2,
-            8 * SCALE,
+            8,
             if fps < 60 { Color::RED } else { Color::GREEN },
         );
 
-        d.draw_text(
+        mode_2d.draw_text(
             &format!("PC: {:#06x}", nes.get_pc()),
             2,
-            2 + (8 * SCALE),
-            8 * SCALE,
+            10,
+            8,
             Color::GREEN,
         );
     }

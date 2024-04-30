@@ -79,6 +79,13 @@ impl NES {
         cycles_left == 0
     }
 
+    pub fn program_counter(&mut self) -> u16 {
+        let cpu = Rc::clone(&self.cpu);
+        let pc = cpu.borrow().get_program_counter();
+
+        pc
+    }
+
     pub fn attach_cart(&mut self, cart: Rc<RefCell<Cartridge>>) {
         self.cartridge = Some(cart.clone());
         self.ppu.attach_cart(cart);

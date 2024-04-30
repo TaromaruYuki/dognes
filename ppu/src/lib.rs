@@ -321,6 +321,7 @@ impl PPU {
     pub fn cpu_write(&mut self, address: u16, data: u8) {
         match address {
             0x0000 => {
+                // println!("CTRL < {data:#06x} @ ({}, {})", self.cycle, self.scanline);
                 self.control = PPUControl::from_bits_retain(data);
                 self.tram_addr
                     .set_nametable_x(self.control.contains(PPUControl::NAMETBL_X));
@@ -334,6 +335,7 @@ impl PPU {
             0x0003 => {}
             0x0004 => {}
             0x0005 => {
+                // println!("SCRL < {data:#06x} @ ({}, {})", self.cycle, self.scanline);
                 if self.address_latch == 0 {
                     self.fine_x = data & 0x07;
                     self.tram_addr.set_coarse_x(data >> 3);
@@ -345,6 +347,7 @@ impl PPU {
                 }
             }
             0x0006 => {
+                // println!("ADDR < {data:#06x} @ ({}, {})", self.cycle, self.scanline);
                 if self.address_latch == 0 {
                     let data_set =
                         (((data & 0x3F) as u16) << 8) | (self.tram_addr.get_data() & 0x00FF);
