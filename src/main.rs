@@ -7,7 +7,7 @@ const PAL_HEIGHT: i32 = 240;
 const SCALE: i32 = 3;
 
 fn main() {
-    let cart = cartridge::Cartridge::new("ic.nes".to_string());
+    let cart = cartridge::Cartridge::new("nestest.nes".to_string());
     let mut nes = cpu::NES::default();
     nes.attach_cart(Rc::new(RefCell::new(cart)));
     nes.reset();
@@ -175,4 +175,8 @@ fn main() {
             Color::GREEN,
         );
     }
+
+    use std::fs;
+
+    fs::write("log_dognes.txt", nes.ppu.log.join("\n")).expect("");
 }

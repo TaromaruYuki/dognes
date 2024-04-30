@@ -211,6 +211,8 @@ pub struct PPU {
     bg_shifter_pattern_hi: u16,
     bg_shifter_attrib_lo: u16,
     bg_shifter_attrib_hi: u16,
+
+    pub log: Vec<String>,
 }
 
 impl Default for PPU {
@@ -242,6 +244,8 @@ impl Default for PPU {
             bg_shifter_pattern_hi: 0x0000,
             bg_shifter_attrib_lo: 0x0000,
             bg_shifter_attrib_hi: 0x0000,
+
+            log: Vec::new(),
         }
     }
 }
@@ -554,18 +558,18 @@ impl PPU {
 
         fn load_bg_shifters(ppu: &mut PPU) {
             ppu.bg_shifter_pattern_lo =
-                (ppu.bg_shifter_pattern_lo & 0xFF00) | (ppu.bg_next_tile_lsb as u16);
+                (ppu.bg_shifter_pattern_lo & 0xFF00) | ppu.bg_next_tile_lsb as u16;
             ppu.bg_shifter_pattern_hi =
-                (ppu.bg_shifter_pattern_hi & 0xFF00) | (ppu.bg_next_tile_msb as u16);
+                (ppu.bg_shifter_pattern_hi & 0xFF00) | ppu.bg_next_tile_msb as u16;
 
             ppu.bg_shifter_attrib_lo = (ppu.bg_shifter_attrib_lo & 0xFF00)
-                | (if (ppu.bg_next_tile_attrib & 0b01) > 0 {
+                | (if ppu.bg_next_tile_attrib & 0b01 != 0 {
                     0xFF
                 } else {
                     0x00
                 });
             ppu.bg_shifter_attrib_hi = (ppu.bg_shifter_attrib_hi & 0xFF00)
-                | (if (ppu.bg_next_tile_attrib & 0b10) > 0 {
+                | (if ppu.bg_next_tile_attrib & 0b10 != 0 {
                     0xFF
                 } else {
                     0x00
@@ -577,9 +581,11 @@ impl PPU {
                 return;
             }
 
+            // Shifting background tile pattern row
             ppu.bg_shifter_pattern_lo <<= 1;
             ppu.bg_shifter_pattern_hi <<= 1;
 
+            // Shifting palette attributes by 1
             ppu.bg_shifter_attrib_lo <<= 1;
             ppu.bg_shifter_attrib_hi <<= 1;
         }
@@ -603,37 +609,37 @@ impl PPU {
                             self.ppu_read(0x2000 | (self.vram_addr.get_data() & 0x0FFF));
                     }
                     2 => {
-                        let address = 0x23C0
-                            | ((self.vram_addr.get_nametable_y() as u16) << 11)
-                            | ((self.vram_addr.get_nametable_x() as u16) << 10)
-                            | (((self.vram_addr.get_coarse_y() as u16) >> 2) << 3)
-                            | ((self.vram_addr.get_coarse_x() as u16) >> 2);
+                        self.bg_next_tile_attrib = self.ppu_read(
+                            0x23C0
+                                | ((self.vram_addr.get_nametable_y() as u16) << 11)
+                                | ((self.vram_addr.get_nametable_x() as u16) << 10)
+                                | (((self.vram_addr.get_coarse_y() as u16) >> 2) << 3)
+                                | ((self.vram_addr.get_coarse_x() as u16) >> 2),
+                        );
 
-                        self.bg_next_tile_attrib = self.ppu_read(address);
-
-                        if (self.vram_addr.get_coarse_y() & 0x02) > 0 {
+                        if self.vram_addr.get_coarse_y() & 0x02 != 0 {
                             self.bg_next_tile_attrib >>= 4;
                         }
-
-                        if (self.vram_addr.get_coarse_x() & 0x02) > 0 {
+                        if self.vram_addr.get_coarse_x() & 0x02 != 0 {
                             self.bg_next_tile_attrib >>= 2;
                         }
 
                         self.bg_next_tile_attrib &= 0x03;
                     }
                     4 => {
-                        let address = ((self.control.contains(PPUControl::PTRN_BG) as u16) << 12)
-                            + ((self.bg_next_tile_id as u16) << 4)
-                            + (self.vram_addr.get_fine_y() as u16);
-
-                        self.bg_next_tile_lsb = self.ppu_read(address);
+                        self.bg_next_tile_lsb = self.ppu_read(
+                            ((self.control.contains(PPUControl::PTRN_BG) as u16) << 12)
+                                + ((self.bg_next_tile_id as u16) << 4)
+                                + (self.vram_addr.get_fine_y() as u16),
+                        );
                     }
                     6 => {
-                        let address = ((self.control.contains(PPUControl::PTRN_BG) as u16) << 12)
-                            + ((self.bg_next_tile_id as u16) << 4)
-                            + ((self.vram_addr.get_fine_y() as u16) + 8);
-
-                        self.bg_next_tile_msb = self.ppu_read(address);
+                        self.bg_next_tile_msb = self.ppu_read(
+                            ((self.control.contains(PPUControl::PTRN_BG) as u16) << 12)
+                                + ((self.bg_next_tile_id as u16) << 4)
+                                + (self.vram_addr.get_fine_y() as u16)
+                                + 8,
+                        );
                     }
                     7 => inc_scroll_x(self),
                     _ => {}
@@ -664,6 +670,52 @@ impl PPU {
             if self.control.contains(PPUControl::EN_NMI) {
                 self.nmi = true;
             }
+        }
+
+        /*
+        if((bg_next_tile_id || bg_next_tile_attrib || bg_next_tile_lsb || bg_next_tile_msb) && this->log.size() <= 40000) {
+            if(this->log.size() == 40000) {
+                std::cout << "Log done!\n";
+            }
+
+            // uint16_t bg_shifter_pattern_lo = 0x0000;
+            // uint16_t bg_shifter_pattern_hi = 0x0000;
+            // uint16_t bg_shifter_attrib_lo  = 0x0000;
+            // uint16_t bg_shifter_attrib_hi  = 0x0000;
+
+            this->log.push_back("BG Next Tile ID: " + std::to_string((uint16_t)bg_next_tile_id));
+            this->log.push_back("BG Next Tile Attr: " + std::to_string((uint16_t)bg_next_tile_attrib));
+            this->log.push_back("BG Next Tile LSB: " + std::to_string((uint16_t)bg_next_tile_lsb));
+            this->log.push_back("BG Next Tile MSB: " + std::to_string((uint16_t)bg_next_tile_msb));
+        }
+        */
+
+        if (self.bg_shifter_pattern_lo != 0
+            || self.bg_shifter_pattern_hi != 0
+            || self.bg_shifter_attrib_lo != 0
+            || self.bg_shifter_attrib_hi != 0)
+            && self.log.len() <= 40000
+        {
+            if self.log.len() == 40000 {
+                println!("Log done!");
+            }
+
+            self.log.push(format!(
+                "BG Shifter Pattern Lo: {}",
+                self.bg_shifter_pattern_lo
+            ));
+            self.log.push(format!(
+                "BG Shifter Pattern Hi: {}",
+                self.bg_shifter_pattern_hi
+            ));
+            self.log.push(format!(
+                "BG Shifter Attrib Lo: {}",
+                self.bg_shifter_attrib_lo
+            ));
+            self.log.push(format!(
+                "BG Shifter Attrib Hi: {}",
+                self.bg_shifter_attrib_hi
+            ));
         }
 
         // Composition
